@@ -40,7 +40,9 @@ body {
     height: 100%;
 }
 
-
+.dropdown{
+    margin-top: 0.1rem;
+}
 
 .dropdown-menu a{
     color: black;
@@ -75,23 +77,6 @@ body {
     height: 100vh;
 }
 
-/* .card-container{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2.5rem;
-    justify-content: flex-start;
-    
-}
-
-.card {
-    color: white;
-    text-align: center;
-    width: 18rem;
-    background-color: #151f30;
-    border-radius: 2rem;
-    
-} */
-
 .card-container{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 18rem));
@@ -112,6 +97,6 @@ body {
 .card-text {
     color: white;
     text-decoration: none;
-    padding-bottom: 2rem;
+    padding-bottom: 1rem;
     font-weight: bold;
 }

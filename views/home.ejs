@@ -1,33 +1,12 @@
 <%- include('./partials/header'); %>
 <%- include('./partials/top_nav'); %>
-<div class="movies-container">
+<section class="movies-container" id="movie-section">
     <div class="card-container">
-        <div class="card" >
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUtBlUT0j3J796lVWi0f6d0kQosJBOh0J3Jg&s" class="card-img-top" alt="...">
-            <a class="card-text" href="#">Avenger 2</a>
-        </div>
-        <div class="card" >
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUtBlUT0j3J796lVWi0f6d0kQosJBOh0J3Jg&s" class="card-img-top" alt="...">
-            <a class="card-text" href="#">Avenger 2</a>
-        </div>
-        <div class="card" >
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUtBlUT0j3J796lVWi0f6d0kQosJBOh0J3Jg&s" class="card-img-top" alt="...">
-            <a class="card-text" href="#">Avenger 2</a>
-        </div>
-        <div class="card" >
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUtBlUT0j3J796lVWi0f6d0kQosJBOh0J3Jg&s" class="card-img-top" alt="...">
-            <a class="card-text" href="#">Avenger 2</a>
-        </div>
-        <div class="card" >
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUtBlUT0j3J796lVWi0f6d0kQosJBOh0J3Jg&s" class="card-img-top" alt="...">
-            <a class="card-text" href="#">Avenger 2</a>
-        </div>
-        <div class="card" >
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUtBlUT0j3J796lVWi0f6d0kQosJBOh0J3Jg&s" class="card-img-top" alt="...">
-            <a class="card-text" href="#">Avenger 2</a>
-        </div>
+        <% if (typeof movieData!== 'undefined') { %>
+            <% movieData.forEach(movie => { %>
+             <%- include('./partials/card',{"imgLink":movie.imgLink,"imgTitle":movie.imgTitle}) %>
+            <% }) %>
+        <% } %>
     </div>
-</div>
-
-
+</section>
 <%- include('./partials/footer'); %>
