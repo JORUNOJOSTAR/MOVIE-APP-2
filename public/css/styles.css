@@ -1,3 +1,117 @@
+/* Common style */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+    background-color:#131720;
+}
+
+/* Nav bar */
 .top-nav {
     padding: 0;
+}
+
+.nav-container{
+    padding: 10px;
+    background-color:#131720;
+}
+
+.nav-container a {
+    color: white;
+}
+
+.nav-container a:hover {
+    cursor: default;
+    color: white;
+}
+
+.left-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.dropdown-title,.dropdown-title:hover{
+    border: none;
+    background-color:#131720;
+    height: 100%;
+}
+
+
+
+.dropdown-menu a{
+    color: black;
+}
+
+.dropdown-menu a:hover{
+    color: black;
+    cursor: pointer;
+}
+
+.nav-btn {
+    border: none;
+    background-color: blue;
+    color: white;
+}
+
+.nav-btn:hover {
+    background-color: darkblue;
+    color: white;
+}
+
+/* card */
+.card img {
+    padding: 15px;
+    height: 20rem;
+    width: 18rem;
+    border-radius: 2rem;
+}
+
+.movies-container{
+    margin: 1vh 1vh;
+    height: 100vh;
+}
+
+/* .card-container{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    justify-content: flex-start;
+    
+}
+
+.card {
+    color: white;
+    text-align: center;
+    width: 18rem;
+    background-color: #151f30;
+    border-radius: 2rem;
+    
+} */
+
+.card-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 18rem));
+    grid-gap: 2.5rem;
+    justify-content: center;
+    padding: initial;
+    
+}
+
+.card {
+    color: white;
+    text-align: center;
+    width: 18rem;
+    background-color: #151f30;
+    border-radius: 2rem;
+}
+
+.card-text {
+    color: white;
+    text-decoration: none;
+    padding-bottom: 2rem;
+    font-weight: bold;
 }
