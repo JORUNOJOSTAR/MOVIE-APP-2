@@ -24,7 +24,7 @@ body {
     color: white;
 }
 
-.nav-container a:hover {
+.nav-container .nav-logo:hover {
     cursor: default;
     color: white;
 }
@@ -66,10 +66,17 @@ body {
 
 /* card */
 .card img {
-    padding: 15px;
-    height: 20rem;
+    padding:  1rem 1rem 0.5rem;
+    /* height: 20rem; */
     width: 18rem;
+    object-fit: cover;
     border-radius: 2rem;
+    transition: linear 0.1s;
+}
+
+.card img:hover{
+    z-index: 1;
+    transform: scale(1.2); 
 }
 
 .movies-container{
@@ -95,8 +102,31 @@ body {
 }
 
 .card-text {
+    font-size: 1rem;
     color: white;
     text-decoration: none;
-    padding-bottom: 1rem;
+    padding: 0.1rem 1.5rem 0.5rem;
     font-weight: bold;
 }
+
+.card-text:hover {
+    color: rgb(104, 104, 235);
+}
+
+/* Page navigation */
+.page-nav{
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.page-nav a {
+    background-color: #151f30;
+    color: white;
+    border-color: grey;
+}
+
+.current-page {
+    background-color: darkgreen!important;
+}
+
