@@ -10,6 +10,10 @@ body {
     background-color:#131720;
 }
 
+.hidden {
+    display: none;
+}
+
 /* Nav bar */
 .top-nav {
     padding: 0;
@@ -25,6 +29,7 @@ body {
 }
 
 .nav-container .nav-logo:hover {
+    z-index: 1;
     cursor: default;
     color: white;
 }
@@ -66,6 +71,7 @@ body {
 
 /* card */
 .card img {
+    display: block;
     padding:  1rem 1rem 0.5rem;
     /* height: 20rem; */
     width: 18rem;
@@ -130,3 +136,8 @@ body {
     background-color: darkgreen!important;
 }
 
+/* SEARCH */
+.search-result{
+    margin: 1.5rem 0rem 1rem 2rem;
+    color: white;
+}
