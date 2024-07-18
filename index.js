@@ -12,6 +12,7 @@ const {
 const app = express();
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 app.listen(APP_PORT,()=>{
     console.log(`APP RUNNING ON ${APP_PORT}`);
@@ -39,6 +40,12 @@ app.get("/search",async(req,res)=>{
             "keyword": movieKeywords
         });
 })
+
+app.post("/category",(req,res)=>{
+    const {genre} = req.body;
+    console.log(genre);
+    res.redirect("/");
+});
 
 app.get("*",(req,res)=>{
     res.redirect("/");
