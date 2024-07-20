@@ -29,7 +29,9 @@ function getPageRoute(){
     const currentPath = window.location.pathname;
     let route = "/getPage?page=";
     if(currentPath==="/search"){
-        route = "search?movieKeywords=" + document.getElementById("search-keyword").innerHTML +"&page="
+        route = "search?movieKeywords=" + document.getElementById("search-keyword").innerHTML +"&page=";
+    }else if(currentPath.includes("/category")){
+        route = currentPath +"?page=";
     }
     return route;
 }

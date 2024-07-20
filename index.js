@@ -1,7 +1,7 @@
 import evn from "dotenv";
 import express from "express";
 import bodyParser from "body-parser";
-import { returnMovies ,searchMovies} from "./movieapi.js";
+import { returnMovies ,searchMovies,getMovieByCategory} from "./movieapi.js";
 
 evn.config();
 
@@ -41,11 +41,19 @@ app.get("/search",async(req,res)=>{
         });
 })
 
-app.post("/category",(req,res)=>{
-    const {genre} = req.body;
-    console.log(genre);
-    res.redirect("/");
-});
+
+
+app.get('/category/:name', async(req, res)=>{
+    const page = req.query.page?req.query.page:1;
+    const categoryName = req.params.name;
+    const movieData = await getMovieByCategory(categoryName,page);
+    res.render("home.ejs",
+        {
+            "movieData":movieData,
+            "keyword": categoryName
+        });
+  });
+  
 
 app.get("*",(req,res)=>{
     res.redirect("/");
