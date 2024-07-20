@@ -18,6 +18,24 @@ body {
     text-transform: uppercase;
 }
 
+/* Scroll-top button */
+#arrow-up{
+    color: white;
+    width: 2rem;
+    height: 2rem;
+    position: fixed;
+    bottom: 5rem;
+    right: -10rem;
+    z-index: 99;
+    cursor: pointer;
+    transition: ease-in-out 0.1s;
+}
+
+
+#arrow-up:hover{
+    color:blue;
+}
+
 /* Nav bar */
 .top-nav {
     padding: 0;
