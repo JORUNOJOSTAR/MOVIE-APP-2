@@ -1,0 +1,28 @@
+<%- include('./partials/header'); %>
+<%- include('./partials/top_nav'); %>
+<div class="moviepg-container">
+    <section id="movie-info">
+        <h1 class="movie-title">
+            <%= movieData.title +" ("+movieData.release_date.substring(0,4)+")" %>
+        </h1>
+        <div class="movie-info-mid">
+            <img src=<%= movieData.imgLink %> alt=<%= movieData.title %>>
+            <div class="details">
+                <h4><%= movieData.tagline || movieData.title %></h4>
+                <p class="details-text">Category: 
+                    <% movieData.genres.forEach(element => { %>
+                        <button type="button" class="btn btn-secondary category-btn"><%= element %></button>
+                    <% }) %>
+                </p>
+                <p class="details-text">Release Date: <%= movieData.release_date %></p>
+                <p class="details-text">Movie Length: <%= movieData.runtime %></p>
+                <p>Overview:<br><%= movieData.overview %></p>
+            </div>
+        </div>
+    </section>
+    <section id="btn-container">
+    </section>
+    <section id="review-container">
+    </section>
+</div>
+<%- include('./partials/common'); %>

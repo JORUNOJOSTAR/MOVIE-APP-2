@@ -135,10 +135,20 @@ body {
     text-decoration: none;
     padding: 0.1rem 1.5rem 0.5rem;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .card-text:hover {
     color: rgb(104, 104, 235);
+}
+
+.card-text-btn{
+    display: flex;
+    margin: 0 auto;
+    justify-content: center;
+    background-color: #151f30;
+    border-style: none;
+    border-radius: 2rem;
 }
 
 /* Page navigation */
@@ -162,4 +172,68 @@ body {
 .search-result{
     margin: 1.5rem 0rem 1rem 2rem;
     color: white;
+}
+
+/* movie view page */
+.moviepg-container{
+    color: white;
+    margin: auto 10vh;
+    height: 100vh;
+}
+
+#movie-info{
+    height: 60vh;
+}
+
+.movie-title{
+    height: 10%;
+    font-size: 2rem;
+    margin: 0;
+}
+
+.movie-info-mid{
+    display: flex;
+    gap: 2rem;
+    height: 90%;
+}
+
+.details{
+    padding-top: 2rem;
+    width: 50%;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+.details-text{
+    font-size: 1.5rem;
+}
+
+.details p:nth-child(2){
+    margin-top: 2rem;
+}
+
+.details p:nth-child(4){
+    margin-bottom: 2rem;
+}
+
+.details p:last-child{
+    font-size: 1rem;
+    text-align: justify;
+    color: rgb(200,200,200);
+    
+}
+
+.category-btn{
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 10rem;
+}
+
+
+#btn-container{
+
+}
+
+#review-container{
+
 }

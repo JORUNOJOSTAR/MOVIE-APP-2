@@ -39,8 +39,6 @@ router.get('/category/:name', async(req, res)=>{
   });
   
 
-router.get("*",(req,res)=>{
-    res.redirect("/");
-});
+
 
 export default router;

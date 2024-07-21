@@ -1,4 +1,7 @@
 <div class="card movie-card">
     <img src=<%= imgLink %> class="card-img-top" alt=<%= imgTitle %>>
-    <a class="card-text"><%= imgTitle %></a>
+    <form action=<%= "/movie/"+imgTitle %> method="POST">
+        <input type="hidden" name="movieId" value=<%= movieId %>>
+        <button class="card-text-btn"><a class="card-text"><%= imgTitle %></a></button>
+    </form>
 </div>

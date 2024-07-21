@@ -4,11 +4,13 @@ evn.config();
 
 const {
     IMG_PATH,
+    MOVIE_LINK,
     CATEGORY_LINK,
     SEARCHAPI,
     API_LINK
 }  = process.env;
 
+// &include_adult=true
 
 async function returnMovies(page=1){
     return makeMovieData(API_LINK+page);
@@ -30,9 +32,11 @@ async function makeMovieData(apiURL){
     let movieData = [];
     await axios.get(apiURL).then(response=>{
         movieData = response.data.results.map(data=>{
+            let backdrop_path = data.backdrop_path;
             return {
-                "imgLink":data.backdrop_path!=null?IMG_PATH + data.backdrop_path:"/assests/imageNotFound.png",
-                "imgTitle":data.title
+                "imgLink": backdrop_path!=null ? IMG_PATH + backdrop_path:"/assests/imageNotFound.png",
+                "imgTitle":data.title,
+                "movieId" : data.id,
             };
         });
     }).catch(error=>{
@@ -41,4 +45,25 @@ async function makeMovieData(apiURL){
     return movieData;
 }
 
-export {returnMovies,searchMovies,getMovieByCategory};
+async function getMovieData(movieId){
+    let movieData = {};
+    await axios.get(MOVIE_LINK.replace("movieId",movieId)).then(response=>{
+        let gernes = response.data.genres.slice(0,3).map(genre => genre.name);
+        let posterpath = response.data.poster_path;
+        movieData = {
+            "title": response.data.title,
+            "release_date": response.data.release_date,
+            "tagline": response.data.tagline,
+            "genres": gernes,
+            "imgLink": posterpath!=null ? IMG_PATH + posterpath:"/assests/imageNotFound.png",
+            "runtime": response.data.runtime,
+            "overview": response.data.overview
+        };
+    }).catch(error=>{
+        console.log(error);
+    });
+
+    return movieData;
+}
+
+export {returnMovies,searchMovies,getMovieByCategory,getMovieData};

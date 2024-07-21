@@ -7,11 +7,11 @@
     <div class="card-container">
         <% if (typeof movieData!== 'undefined') { %>
             <% movieData.forEach(movie => { %>
-             <%- include('./partials/card',{"imgLink":movie.imgLink,"imgTitle":movie.imgTitle}) %>
+             <%- include('./partials/card',{"imgLink":movie.imgLink,"imgTitle":movie.imgTitle,"movieId": movie.movieId}) %>
             <% }) %>
         <% } %>
     </div>
     <%- include('./partials/page_nav'); %>
 </section>
-<%- include('./partials/scrolltop'); %>
-<%- include('./partials/footer'); %>
+<%- include('./partials/common'); %>
+<script src="/script/pageNav.js"></script>
