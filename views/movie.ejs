@@ -11,18 +11,36 @@
                 <h4><%= movieData.tagline || movieData.title %></h4>
                 <p class="details-text">Category: 
                     <% movieData.genres.forEach(element => { %>
+                        <a href=<%= "/category/" + element.toLowerCase().replace(" ", "%20") %>>
                         <button type="button" class="btn btn-secondary category-btn"><%= element %></button>
+                        </a>
                     <% }) %>
                 </p>
                 <p class="details-text">Release Date: <%= movieData.release_date %></p>
                 <p class="details-text">Movie Length: <%= movieData.runtime %></p>
-                <p>Overview:<br><%= movieData.overview %></p>
+                <p>Overview:</p>
+                <p><%= movieData.overview %></p>
             </div>
+            <%- include('./partials/movie/rating.ejs') %>
         </div>
     </section>
     <section id="btn-container">
+        <%- include('./partials/movie/watchlistbtn.ejs') %>
+        <%- include('./partials/movie/reviewbtn.ejs') %>
     </section>
     <section id="review-container">
+        <div class="sort-container">
+            <p class="popular current-sort">Most popular</p>
+            <span></span>
+            <p class="upt-date">Up to date</p>
+            <span></span>
+            <p class="funny">Most funny</p>
+        </div>
+        <div class="review-content-container">
+            <%- include('./partials/movie/reviewcontent.ejs') %>
+            <div class="more-review-btn">More Reviews</div>
+        </div>
     </section>
 </div>
+<script src="/script/movie.js"></script>
 <%- include('./partials/common'); %>

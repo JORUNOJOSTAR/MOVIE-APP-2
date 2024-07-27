@@ -7,15 +7,19 @@
 
 body {
     font-family: "Roboto", sans-serif;
-    background-color:#131720;
+    background-color:rgb(27,40,56);
 }
 
 .hidden {
-    display: none;
+    display: none!important;
 }
 
 #search-keyword{
     text-transform: uppercase;
+}
+
+a {
+    text-decoration: none;
 }
 
 /* Scroll-top button */
@@ -43,7 +47,7 @@ body {
 
 .nav-container{
     padding: 10px;
-    background-color:#131720;
+    background-color:rgb(23,26,33);
 }
 
 .nav-container a {
@@ -63,7 +67,7 @@ body {
 
 .dropdown-title,.dropdown-title:hover{
     border: none;
-    background-color:#131720;
+    background-color:rgb(23,26,33);
     height: 100%;
 }
 
@@ -174,66 +178,3 @@ body {
     color: white;
 }
 
-/* movie view page */
-.moviepg-container{
-    color: white;
-    margin: auto 10vh;
-    height: 100vh;
-}
-
-#movie-info{
-    height: 60vh;
-}
-
-.movie-title{
-    height: 10%;
-    font-size: 2rem;
-    margin: 0;
-}
-
-.movie-info-mid{
-    display: flex;
-    gap: 2rem;
-    height: 90%;
-}
-
-.details{
-    padding-top: 2rem;
-    width: 50%;
-    overflow: scroll;
-    scrollbar-width: none;
-}
-
-.details-text{
-    font-size: 1.5rem;
-}
-
-.details p:nth-child(2){
-    margin-top: 2rem;
-}
-
-.details p:nth-child(4){
-    margin-bottom: 2rem;
-}
-
-.details p:last-child{
-    font-size: 1rem;
-    text-align: justify;
-    color: rgb(200,200,200);
-    
-}
-
-.category-btn{
-    font-size: 1rem;
-    padding: 0.5rem;
-    border-radius: 10rem;
-}
-
-
-#btn-container{
-
-}
-
-#review-container{
-
-}
