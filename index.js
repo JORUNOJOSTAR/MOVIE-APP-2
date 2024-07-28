@@ -21,6 +21,9 @@ app.get("/test",(req,res)=>{
       res.render("movie.ejs",{"movieData": movieData});
 })
 
+
+
+
 app.get("*",(req,res)=>{
     res.redirect("/");
 });
