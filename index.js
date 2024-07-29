@@ -22,12 +22,6 @@ app.get("/test",(req,res)=>{
 })
 
 
-app.get("/review",async (req,res)=>{
-    console.log(await reviewDAO.deleteReview("10"));
-    res.sendStatus(200);
-});
-
-
 
 app.get("*",(req,res)=>{
     res.redirect("/");

@@ -26,11 +26,10 @@ export class reviewDAO{
 
     //Get review by Order
     static async getReviewByOrder(order){
-        
+        const order_by = ["like_count","review_datetime","funny_count"];
     }
 
     
-
     // CREATE OR EDIT REVIEW
     static async updateReview(message,star,movie_id,user_id){
         let reviews = {};
@@ -64,15 +63,36 @@ export class reviewDAO{
     
     // INCREASE OR DECREASE LIKE COUNT
     
-    static async updateLikeCount(review_id){
+    static async updateLikeCount(review_id,decrease=false){
         // const sql = `This is a string ${review_id}`;
+        let updateStatus = -1;
+        let updateString = decrease?"-1":"+1";
+
+        const result = await executeQuery(
+            `UPDATE reviews SET like_count = like_count ${updateString} WHERE id = $1`,
+            [review_id]);
+
+        if(result.rowCount){
+            updateStatus=result.rowCount;
+        }
+
+
+        return updateStatus;
     }
 
     // INCREASE OR DECREASE Funny COUNT
-    static async updateFunnyCount(review_id){
+    static async updateFunnyCount(review_id,decrease=false){
+        let updateStatus = -1;
+        let updateString = decrease?"-1":"+1";
 
+        const result = await executeQuery(
+            `UPDATE reviews SET funny_count = funny_count ${updateString} WHERE id = $1`,
+            [review_id]);
+
+        if(result.rowCount){
+            updateStatus=result.rowCount;
+        }
+        return updateStatus;
     }
-
-    
     
 };
