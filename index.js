@@ -2,7 +2,7 @@ import app from "./server.js";
 import homeRouter from "./controller/homeController.js";
 import movieRouter from "./controller/movieController.js";
 
-
+import { reviewDAO } from "./DAO/reviews_dao.js";
 
 app.use(homeRouter);
 app.use(movieRouter);
@@ -21,6 +21,11 @@ app.get("/test",(req,res)=>{
       res.render("movie.ejs",{"movieData": movieData});
 })
 
+
+app.get("/review",async (req,res)=>{
+    console.log(await reviewDAO.deleteReview("10"));
+    res.sendStatus(200);
+});
 
 
 

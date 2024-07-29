@@ -12,6 +12,8 @@ const db = new pg.Client(
     }
 );
 
+
+
 db.connect();
 
 async function executeQuery(query,params){
