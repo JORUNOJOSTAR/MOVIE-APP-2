@@ -28,7 +28,7 @@ async function executeQuery(query,params){
 
 // function for getting data
 async function getData(query,...params){
-    let data = {};
+    let data = [];
     const result = await executeQuery(query,...params);
     if(result.rows && result.rows.length>0){
         data=result.rows;

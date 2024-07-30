@@ -1,40 +1,30 @@
-import {executeQuery} from "../dbConnection.js";
+import {executeQuery,getData,manipulateData} from "../dbConnection.js";
 
 export class reviewDAO{
 
     // Get all reviews of movie
     static async getReviewByMovieId(movie_id){
-        let reviews = {};
-        const result = await executeQuery("SELECT * FROM reviews WHERE movie_id = $1",[movie_id]);
-        if(result.rows && result.rows.length>0){
-            reviews=result.rows;
-        }
-        return reviews;
+        return await getData("SELECT * FROM reviews WHERE movie_id = $1",[movie_id]);
     }
-
 
     // Get all reviews of user
     static async getReviewByUserId(user_id){
-        let reviews = {};
-        const result = await executeQuery(`SELECT * FROM reviews WHERE user_id = $1`,[user_id]);
-        if(result.rows && result.rows.length>0){
-            reviews=result.rows;
-        }
-        return reviews;
+        return await getData(`SELECT * FROM reviews WHERE user_id = $1`,[user_id]);
     }
 
 
     //Get review by Order
-    static async getReviewByOrder(order){
+    static async getReviewByOrder(order=0){
         const order_by = ["like_count","review_datetime","funny_count"];
+        order = order > 2 ? 0:order;
+        return await getData(`SELECT * FROM reviews ORDER BY ${order_by[order]} desc`);
     }
 
     
     // CREATE OR EDIT REVIEW
     static async updateReview(message,star,movie_id,user_id){
-        let reviews = {};
         let datetime = new Date();
-        const result = await executeQuery(`
+        const result = await getData(`
             INSERT INTO reviews (review_message,review_star,review_datetime,movie_id,user_id)
                VALUES ($1,$2,$3,$4,$5)
                ON CONFLICT(movie_id,user_id) 
@@ -44,40 +34,23 @@ export class reviewDAO{
                review_datetime = EXCLUDED.review_datetime RETURNING *
             `,
             [message,star,datetime,movie_id,user_id]);
-
-        if(result.rows && result.rows.length>0){
-            reviews=result.rows[0];
-        }
+        const reviews = result[0] || [];
         return reviews;
     }
 
     // DELETE REVIEW
     static async deleteReview(review_id){
-        let deleteStatus = -1;
-        const result = await executeQuery("DELETE FROM reviews WHERE id = $1",[review_id]);
-        if(result.rowCount){
-            deleteStatus=result.rowCount;
-        }
-        return deleteStatus;
+        return await manipulateData("DELETE FROM reviews WHERE id = $1",[review_id]);
     }
     
     // INCREASE OR DECREASE LIKE COUNT
-    
     static async updateLikeCount(review_id,decrease=false){
-        // const sql = `This is a string ${review_id}`;
         let updateStatus = -1;
         let updateString = decrease?"-1":"+1";
 
-        const result = await executeQuery(
+        return await manipulateData(
             `UPDATE reviews SET like_count = like_count ${updateString} WHERE id = $1`,
             [review_id]);
-
-        if(result.rowCount){
-            updateStatus=result.rowCount;
-        }
-
-
-        return updateStatus;
     }
 
     // INCREASE OR DECREASE Funny COUNT
@@ -85,14 +58,9 @@ export class reviewDAO{
         let updateStatus = -1;
         let updateString = decrease?"-1":"+1";
 
-        const result = await executeQuery(
+        return await manipulateData(
             `UPDATE reviews SET funny_count = funny_count ${updateString} WHERE id = $1`,
             [review_id]);
-
-        if(result.rowCount){
-            updateStatus=result.rowCount;
-        }
-        return updateStatus;
     }
     
 };

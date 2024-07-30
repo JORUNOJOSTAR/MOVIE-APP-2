@@ -1,4 +1,4 @@
-import {executeQuery} from "../dbConnection.js";
+import {executeQuery,getData,manipulateData} from "../dbConnection.js";
 import bcrypt from "bcrypt";
 
 async function hashPW(password){
@@ -22,28 +22,24 @@ async function comparePW(password,storedPW){
     return validPW;
 }
 
-
 export class userDAO{
 
     static async checkUser(email,password){
-        let user = {};
-        const result = await executeQuery("SELECT * FROM users WHERE email = $1",[email]);
-        if(result.rows && result.rows.length>0){
-            const storedPW = result.rows[0].password;
+        let user = {}
+        const result = await getData("SELECT * FROM users WHERE email = $1",[email]);
+        if(result.length > 0){
+            const storedPW = result[0].password;
             const isValid = await comparePW(password,storedPW);
             if(isValid){
-                user = result.rows[0];
+                user = result[0];
             }
-        } 
+        }
         return user;
     }
 
     static async getUserById(id){
-        let user = {};
-        const result = await executeQuery("SELECT email,name,age FROM users WHERE id = $1",[id]);
-        if(result.rows && result.rows.length>0){
-            user=result.rows[0];
-        }
+        const result = await getData("SELECT email,name,age FROM users WHERE id = $1",[id]);
+        const user = result[0] || {};
         return user;
     }
 
@@ -51,24 +47,14 @@ export class userDAO{
         let id = -1;
         const hasedPW =await hashPW(password);
         if(hasedPW && password.length>=8){
-            const result = await executeQuery("INSERT INTO users (email, password,name,age) VALUES ($1, $2, $3,$4) RETURNING id",[email, hasedPW,name,age]);
-            if(result.rows && result.rows.length>0){
-              id=result.rows[0].id;
-            }
+            const result = await getData("INSERT INTO users (email, password,name,age) VALUES ($1, $2, $3,$4) RETURNING id",[email, hasedPW,name,age]);
+            id = result[0] || id;
         }
         return id;
     }
 
     static async changeUserName(id,newName){
-        let changeStatus = -1;
-        const currentName = await this.getUserById(id);
-        if(currentName.name!==newName){
-            const result = await executeQuery(" UPDATE users SET name = $2 WHERE id = $1 ",[id,newName]);
-            if(result.rowCount){
-                changeStatus=result.rowCount;
-            }
-        }
-        return changeStatus;
+        return await manipulateData(" UPDATE users SET name = $2 WHERE id = $1 ",[id,newName]);
     }
 
     static async changePassWord(email,currentPW,newPW){
@@ -76,9 +62,8 @@ export class userDAO{
         const user = await this.checkUser(email,currentPW);
         if(user.id && currentPW!==newPW && newPW.length>=8){
             const hasedPW =await hashPW(newPW);
-            const result = await executeQuery(" UPDATE users SET password = $1 WHERE email = $2 ",[hasedPW,email]);
-            if(result.rowCount){
-                changeStatus=result.rowCount;
+            if(hasedPW){
+                changeStatus = await manipulateData(" UPDATE users SET password = $1 WHERE email = $2 ",[hasedPW,email]);
             }
         }
         return changeStatus;

@@ -2,7 +2,7 @@ import app from "./server.js";
 import homeRouter from "./controller/homeController.js";
 import movieRouter from "./controller/movieController.js";
 
-import watchlist_dao from "./DAO/watchlist_dao.js";
+import { reviewDAO } from "./DAO/reviews_dao.js";
 
 app.use(homeRouter);
 app.use(movieRouter);
@@ -22,8 +22,8 @@ app.get("/test",(req,res)=>{
 })
 
 
-app.get("/watchlist",async(req,res)=>{
-    console.log(await watchlist_dao.addToWatchlist("11",103));
+app.get("/review",async(req,res)=>{
+    console.log(await reviewDAO.getReviewByOrder(4));
     res.sendStatus(200);
 })
 
