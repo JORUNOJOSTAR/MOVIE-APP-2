@@ -2,7 +2,7 @@ import app from "./server.js";
 import homeRouter from "./controller/homeController.js";
 import movieRouter from "./controller/movieController.js";
 
-import { reviewDAO } from "./DAO/reviews_dao.js";
+import watchlist_dao from "./DAO/watchlist_dao.js";
 
 app.use(homeRouter);
 app.use(movieRouter);
@@ -19,6 +19,12 @@ app.get("/test",(req,res)=>{
         overview:"A brilliant counterterrorism analyst with a deep distrust A brilliant counterterrorism analyst with a deep distrust A brilliant counterterrorism analyst with a deep distrust A brilliant counterterrorism analyst with a deep distrust A brilliant counterterrorism analyst with a deep distrust of AI one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one one discovers it might be her only hope when a mission to capture a renegade robot goes awry."
       };
       res.render("movie.ejs",{"movieData": movieData});
+})
+
+
+app.get("/watchlist",async(req,res)=>{
+    console.log(await watchlist_dao.addToWatchlist("11",103));
+    res.sendStatus(200);
 })
 
 

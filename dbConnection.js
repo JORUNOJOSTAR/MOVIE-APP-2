@@ -26,5 +26,25 @@ async function executeQuery(query,params){
     return queryResult;
 }
 
+// function for getting data
+async function getData(query,...params){
+    let data = {};
+    const result = await executeQuery(query,...params);
+    if(result.rows && result.rows.length>0){
+        data=result.rows;
+    }
+    return data;
+}
 
-export {executeQuery};
+// function for insert,update,delete
+async function manipulateData(query,...params){
+    let status = -1;
+    const result = await executeQuery(query,...params);
+    if(result.rowCount){
+        status=result.rowCount;
+    }
+    return status;
+}
+
+
+export {executeQuery,getData,manipulateData};
