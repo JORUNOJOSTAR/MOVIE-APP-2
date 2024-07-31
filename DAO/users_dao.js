@@ -1,4 +1,4 @@
-import {executeQuery,getData,manipulateData} from "../dbConnection.js";
+import {getData,manipulateData} from "../dbConnection.js";
 import bcrypt from "bcrypt";
 
 async function hashPW(password){
