@@ -23,7 +23,7 @@ app.get("/test",(req,res)=>{
 
 
 app.get("/review",async(req,res)=>{
-    console.log(await reviewDAO.getReviewByOrder(4));
+    console.log(await reviewDAO.deleteReview(17,13));
     res.sendStatus(200);
 })
 
