@@ -6,6 +6,7 @@
         <h1 class="movie-title">
             <%= movieData.title +" ("+movieData.release_date.substring(0,4)+")" %>
         </h1>
+        <input type="hidden" id="movieId" name="movieId" value=<%= movieData.movieId %>>
         <div class="movie-info-mid">
             <img src=<%= movieData.imgLink %> alt=<%= movieData.title %>>
             <div class="details">
@@ -22,7 +23,8 @@
                 <p>Overview:</p>
                 <p><%= movieData.overview %></p>
             </div>
-            <%- include('./partials/movie/rating.ejs') %>
+            <div class="review-overview">
+            </div>
         </div>
     </section>
     <section id="btn-container">
@@ -47,3 +49,4 @@
 <script src="/script/ejs.min.js"></script>
 <script src="/script/movieComponent.js"></script>
 <script src="/script/movie.js" type="module"></script>
+<script src="/script/movieRating.js" type="module"></script>

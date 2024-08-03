@@ -131,7 +131,7 @@
 .percentage-bar div{
     margin: auto 0;
     height: 50%;
-    width: 50%;
+    width: 100%;
     background-color: yellow;
 }
 

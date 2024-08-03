@@ -50,13 +50,16 @@ async function getMovieData(movieId){
     await axios.get(MOVIE_LINK.replace("movieId",movieId)).then(response=>{
         let gernes = response.data.genres.slice(0,3).map(genre => genre.name);
         let posterpath = response.data.poster_path;
+        let runtime = getHourMinute(response.data.runtime);
+        
         movieData = {
+            "movieId": movieId,
             "title": response.data.title,
             "release_date": response.data.release_date,
             "tagline": response.data.tagline,
             "genres": gernes,
             "imgLink": posterpath!=null ? IMG_PATH + posterpath:"/assests/imageNotFound.png",
-            "runtime": response.data.runtime,
+            "runtime": runtime,
             "overview": response.data.overview
         };
     }).catch(error=>{
@@ -64,6 +67,14 @@ async function getMovieData(movieId){
     });
 
     return movieData;
+}
+
+function getHourMinute(time){
+    let hour = Math.floor(time/60);
+    let minute = time % 60;
+    hour = (hour>0)?hour+"hr":"";
+    minute = (minute>0)?minute+"min":"";
+    return hour +" "+minute;
 }
 
 export {returnMovies,searchMovies,getMovieByCategory,getMovieData};
