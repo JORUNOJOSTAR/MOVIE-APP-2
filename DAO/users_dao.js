@@ -43,6 +43,8 @@ export class userDAO{
         return user;
     }
 
+    
+
     static async registerUser(name,email,password,age){
         let id = -1;
         const hasedPW =await hashPW(password);

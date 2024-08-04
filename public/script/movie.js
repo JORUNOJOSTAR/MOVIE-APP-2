@@ -1,5 +1,5 @@
 import { star,halfstar,rating} from "./movieComponent.js";
-
+import { showRating } from "./movieRating.js";
 
 
 // Watch list btn

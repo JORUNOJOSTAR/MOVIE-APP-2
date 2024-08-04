@@ -15,10 +15,15 @@ export class reviewDAO{
 
 
     //Get review by Order
-    static async getReviewByOrder(order=0){
+    static async getReviewByOrder(movie_id,offset,order=0){
         const order_by = ["like_count","review_datetime","funny_count"];
         order = order > 2 ? 0:order;
-        return await getData(`SELECT * FROM reviews ORDER BY ${order_by[order]} desc`);
+        return await getData(
+            `SELECT * FROM reviews WHERE movie_id = $1 
+            ORDER BY ${order_by[order]} desc  
+            limit 5 offset $2`,
+            [movie_id,offset]
+        );
     }
 
     
@@ -82,6 +87,10 @@ export class reviewDAO{
         }
 
         return updateStatus;
+    }
+
+    static async ratingOfMovie(movie_id){
+        return await getData("SELECT review_star FROM reviews WHERE movie_id = $1 ",[movie_id]);
     }
 
     // DELETE REVIEW BY USER_ID
