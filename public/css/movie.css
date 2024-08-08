@@ -236,6 +236,7 @@
 
 .review-user p{
     color:#C1DBF4;
+    width: 10%;
 }
 
 .review-stars svg {
@@ -256,6 +257,7 @@
 .reaction-btn{
     gap: 1rem;
 }
+
 
 .reaction-btn svg {
     color: rgb(47, 105, 138);

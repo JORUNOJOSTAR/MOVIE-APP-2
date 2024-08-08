@@ -1,6 +1,9 @@
 import {rating,review} from "./movieComponent.js";
 const movieId = document.getElementById("movieId").value;
 const orderList = ["Most popular","Up to date","Most funny"];
+const showReviewFunc= async() => await showReviews();
+const showRatingFunc = async() => await showRating();
+
 let ratingHTML = `
 <h2 style="padding-top: 25%;">No rating yet...</h2>
 <p>Be the first to make a review</p>
@@ -10,16 +13,18 @@ let ratingParent = document.querySelector(".review-overview");
 let reviewParent = document.querySelector(".review-content-container");
 let moreReviewBtn = `<div class="more-review-btn">More Reviews</div>`;
 
-const showReviewFunc=async() => {
-    await showReviews();
-};
-
-const showRatingFunc = async() => {
-    await showRating();
-};
-
 showRatingFunc();
 showReviewFunc();
+setWatchListBtn();
+
+
+// Setting up watchlist
+document.querySelector(".watchlist-btn").addEventListener("click",watchlistBtn);
+function watchlistBtn(){
+    setRemoveCookies(movieId);
+    document.querySelector(".watchlist-add").classList.toggle("hidden");
+    document.querySelector(".watchlist-remove").classList.toggle("hidden"); 
+}
 
 
 document.querySelectorAll(".sort-details").forEach((element)=>{
@@ -30,7 +35,6 @@ document.querySelectorAll(".sort-details").forEach((element)=>{
         showReviewFunc();
     })
 });
-
 
 async function showRating(){
     const MovieRating = await getData("rating",movieId);
@@ -77,4 +81,30 @@ async function getData(urlString,movieId,queryString=""){
     return reviews;
 }
 
+function setRemoveCookies(id){
+    let currentCookie = document.cookie;
+    let expires = new Date();
+    expires.setTime(expires.getTime()+(7*24*60*60*1000));
+    let cookieId = currentCookie ? currentCookie.split(";")[0].split("=")[1].split(",") : [];
+    if(cookieId.includes(id)){
+        const index = cookieId.indexOf(id);
+        cookieId.splice(index,1);
+    }else{
+        cookieId.push(id);
+    }
+    document.cookie=`movieId=${cookieId.toString()}; expires=${expires};`
+
+}
+
+function setWatchListBtn(){
+    let currentCookie = document.cookie;
+    let cookieId = currentCookie ? currentCookie.split(";")[0].split("=")[1].split(",") : [];
+    if(cookieId.includes(movieId)){
+        document.querySelector(".watchlist-add").classList.add("hidden");
+        document.querySelector(".watchlist-remove").classList.remove("hidden"); 
+    }else{
+        document.querySelector(".watchlist-add").classList.remove("hidden");
+        document.querySelector(".watchlist-remove").classList.add("hidden"); 
+    }
+}
 
