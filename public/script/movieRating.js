@@ -92,7 +92,7 @@ function setRemoveCookies(id){
     }else{
         cookieId.push(id);
     }
-    document.cookie=`movieId=${cookieId.toString()}; expires=${expires};`
+    document.cookie=`movieId=${cookieId.toString()}; expires=${expires};path=/;`
 
 }
 

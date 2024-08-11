@@ -11,3 +11,8 @@ window.onscroll =  ()=>{
 function goTop(){
     document.documentElement.scrollTop = 0;   
 }
+
+function goWatchList(){
+  location.href="http://localhost:3000/watchList";
+}
+

@@ -4,13 +4,13 @@
     <section id="movie-info">
         <div id="output"></div>
         <h1 class="movie-title">
-            <%= movieData.title +" ("+movieData.release_date.substring(0,4)+")" %>
+            <%= movieData.imgTitle +" ("+movieData.release_date.substring(0,4)+")" %>
         </h1>
         <input type="hidden" id="movieId" name="movieId" value=<%= movieData.movieId %>>
         <div class="movie-info-mid">
-            <img src=<%= movieData.imgLink %> alt=<%= movieData.title %>>
+            <img src=<%= movieData.imgLink %> alt=<%= movieData.imgTitle %>>
             <div class="details">
-                <h4><%= movieData.tagline || movieData.title %></h4>
+                <h4><%= movieData.tagline || movieData.imgTitle %></h4>
                 <p class="details-text">Category: 
                     <% movieData.genres.forEach(element => { %>
                         <a href=<%= "/category/" + element.toLowerCase().replace(" ", "%20") %>>

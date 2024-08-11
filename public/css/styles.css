@@ -22,11 +22,20 @@ a {
     text-decoration: none;
 }
 
-/* Scroll-top button */
-#arrow-up{
+.icon{
     color: white;
     width: 2rem;
     height: 2rem;
+}
+
+.icon:hover{
+    cursor: pointer;
+    color:blue;
+}
+
+/* Scroll-top button */
+#arrow-up{
+    
     position: fixed;
     bottom: 5rem;
     right: -10rem;
@@ -35,10 +44,6 @@ a {
     transition: ease-in-out 0.1s;
 }
 
-
-#arrow-up:hover{
-    color:blue;
-}
 
 /* Nav bar */
 .top-nav {
@@ -63,6 +68,17 @@ a {
 .left-nav {
     display: flex;
     gap: 10px;
+}
+
+.bi-bookmark-heart{
+    margin-left: 2rem;
+    margin-right: 0.75rem;
+}
+
+.right-nav{
+    display: flex;
+    align-items: center;
+        
 }
 
 .dropdown-title,.dropdown-title:hover{
@@ -126,6 +142,7 @@ a {
 }
 
 .card {
+    position: relative;
     color: white;
     text-align: center;
     width: 18rem;
@@ -176,5 +193,13 @@ a {
 .search-result{
     margin: 1.5rem 0rem 1rem 2rem;
     color: white;
+}
+
+/* WatchList */
+.remove {
+    position: absolute;
+    color: red;
+    top: -0.5rem;
+    left: -0.5rem;
 }
 

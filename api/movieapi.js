@@ -45,27 +45,26 @@ async function makeMovieData(apiURL){
     return movieData;
 }
 
-async function getMovieData(movieId){
+async function getMovieData(movieId,poster=true){
     let movieData = {};
     await axios.get(MOVIE_LINK.replace("movieId",movieId)).then(response=>{
         let gernes = response.data.genres.slice(0,3).map(genre => genre.name);
-        let posterpath = response.data.poster_path;
+        let path = poster?response.data.poster_path:response.data.backdrop_path;
         let runtime = getHourMinute(response.data.runtime);
         
         movieData = {
             "movieId": movieId,
-            "title": response.data.title,
+            "imgTitle": response.data.title,
             "release_date": response.data.release_date,
             "tagline": response.data.tagline,
             "genres": gernes,
-            "imgLink": posterpath!=null ? IMG_PATH + posterpath:"/assests/imageNotFound.png",
+            "imgLink": path!=null ? IMG_PATH + path:"/assests/imageNotFound.png",
             "runtime": runtime,
             "overview": response.data.overview
         };
     }).catch(error=>{
         console.log(error);
     });
-
     return movieData;
 }
 
