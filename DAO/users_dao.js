@@ -46,7 +46,7 @@ export class userDAO{
     
 
     static async registerUser(name,email,password,age){
-        let id = -1;
+        let id = {id:-1};
         const hasedPW =await hashPW(password);
         if(hasedPW && password.length>=8){
             const result = await getData("INSERT INTO users (email, password,name,age) VALUES ($1, $2, $3,$4) RETURNING id",[email, hasedPW,name,age]);

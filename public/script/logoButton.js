@@ -13,6 +13,9 @@ function goTop(){
 }
 
 function goWatchList(){
-  location.href="http://localhost:3000/watchList";
+  location.href="/watchList";
 }
 
+function goProfile(){
+  location.href="/profile";
+}

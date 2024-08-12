@@ -203,3 +203,58 @@ a {
     left: -0.5rem;
 }
 
+/* Login and register form */
+.form{
+    color: white;
+    margin: 1rem 20vh 0;
+}
+
+.submit-btn{
+    margin-top: 1rem;
+}
+
+.login-intro{
+    margin-top: 1rem;
+    margin-left: 1rem;
+}
+
+.signup-link{
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.form-group{
+    margin-bottom: 1rem;
+}
+
+.err-message{
+    color: red;
+}
+
+.profile-item input{
+    font-size: 1.5rem;
+}
+
+
+
+.profile-item{
+    margin-bottom: 2rem;
+}
+
+.profile-container{
+    display: flex;
+    gap: 5rem;
+}
+
+.profile-container div{
+    flex-grow: 1;
+}
+
+.profile-info{
+    width: 40%;
+}
+
+.change-profile form {
+    margin-bottom: 2rem;
+}
+

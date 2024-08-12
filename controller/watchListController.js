@@ -4,7 +4,8 @@ const router = express.Router();
 
 router.get("/watchList",async(req,res)=>{
     let movieData = [];
-    const {movieId} = req.cookies;
+    let {movieId} = req.cookies;
+    movieId = movieId || "";
     const movieList = movieId.split(",").filter(e=>Boolean(e));
 
     for(let i=0;i<movieList.length;i++){
