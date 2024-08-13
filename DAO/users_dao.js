@@ -56,7 +56,7 @@ export class userDAO{
     }
 
     static async changeUserName(id,newName){
-        return await manipulateData(" UPDATE users SET name = $2 WHERE id = $1 ",[id,newName]);
+        return await getData(" UPDATE users SET name = $2 WHERE id = $1 returning name ",[id,newName]);
     }
 
     static async changePassWord(email,currentPW,newPW){

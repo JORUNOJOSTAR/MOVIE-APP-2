@@ -5,7 +5,7 @@
         <div class="profile-info">
             <div class="profile-item">
                 <h2>Your Name</h2>
-                <input type="text" class="form-control " value=<%= userName %> readonly>
+                <input type="text" class="form-control "  id="name" value=<%= userName %> readonly>
             </div>
             <div class="profile-item">
                 <h2>Your Email</h2>
@@ -21,19 +21,18 @@
         </div>
 
         <div class="change-profile">
-            <form action="/changeName" method="post">
-                <% if (typeof messageName !== "undefined") { %>
-                    <p class="err-message"><%= messageName %></p>
-                <% } %>
+            <p class="change-name-msg"></p>
+            <form onsubmit="return false">
                 <h2>You can change your name here</h2>
                 <div >
                     <label for="newName">Enter new user name</label>
                     <input type="text" class="form-control " id="newName" aria-describedby="User Name" placeholder="New Name" name="newName" required>
                 </div>
-                <button type="submit" class="btn btn-primary submit-btn">Change Name</button>
+                <button type="submit" class="btn btn-primary submit-btn" onclick="changeName()">Change Name</button>
             </form>
             
-            <form action="/changePassWord" method="post">
+            <form onsubmit="return false">
+                <p class="change-pw-msg"></p>
                 <h2>You can change your password here</h2>
                 <div class="form-group">
                     <label for="New-password">New Password</label>
@@ -43,12 +42,11 @@
                     <label for="Old-password">Old Password</label>
                     <input type="password" class="form-control "  id="Old-password" placeholder="Password" name="oldPassword" required>
                 </div>
-                <button type="submit" class="btn btn-primary submit-btn">Change password</button>
+                <button type="submit" class="btn btn-primary submit-btn" onclick="changePw()">Change password</button>
             </form>
+
         </div>
     </div>
-
-    
-
 </div>
 <%- include('./partials/common'); %>
+<script src="/script/profile.js"></script>

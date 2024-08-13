@@ -9,6 +9,16 @@ const {
 
 const router = express.Router();
 
+function errMessageMaker(msgKey,keyword){
+    const msg = {
+        same: {message: `New ${keyword} is same with the old one`,isSuccess:false},
+        err : {message: `Error occur while changing ${keyword}.Please try again`,isSuccess:false},
+        invalid: {message: `${keyword} is Invalid`,isSuccess:false},
+        success: {message: `${keyword} changed complete.`,isSuccess:true }
+    }
+    return msg[msgKey];
+}
+
 const redirectLogin = (req,res,next) =>{
     if(req.session.userId){
         next();
@@ -81,38 +91,44 @@ router.post("/logout",redirectLogin,(req,res)=>{
     })
 })
 
-router.post("/changeName",redirectLogin,async(req,res)=>{
-    let {newName} = req.body;
+
+
+
+router.put("/changeName",redirectLogin,async(req,res)=>{
+    let newName = req.body.newName;
     if(newName){
         if(newName == req.session.userName){
-            return res.json({messageName: "New name is same with the old one"});
+            return res.json(errMessageMaker("same","name"));
         }
-        newName = await userDAO.changeUserName(req.session.userId,newName)
-        req.session.userName = newName;
-        return res.json({newName:newName});
+        let changedName = await userDAO.changeUserName(req.session.userId,newName);
+        if(changedName.length<=0){
+            return res.json(errMessageMaker("err","name"));
+        }
+        req.session.userName = changedName[0].name;
+        return res.json({newName:changedName[0].name});
     }else{
-        return res.json({messageName: "Invalid name"});
+        return res.json(errMessageMaker("invalid","name"));
     }
 })
 
-router.post("/changePassWord",redirectLogin,async(req,res)=>{
-    let {newPassword,oldPassword} = req.body;
-    newPassword = newPassword || "";
-    oldPassword = oldPassword || "";
+router.put("/changePassWord",redirectLogin,async(req,res)=>{
+    
+    let newPassword = req.body.newPw || "";
+    let oldPassword = req.body.oldPw || "";
     const email = req.session.userEmail;
     if(newPassword.length<8){
-        return res.json({messsagePW: "New password is invalid"});
+        return res.json(errMessageMaker("invalid","Password"));
     }
     
     const isOldpw = await userDAO.checkUser(email,newPassword);
     if(isOldpw.email){
-        return res.json({messagePW: "Password is same as the old one"});
+        return res.json(errMessageMaker("same","Password"));
     }else{
         const changeStatus = await userDAO.changePassWord(email,oldPassword,newPassword);
         if(changeStatus<0){
-            return res.json({messsagePW: "Old password is not Correct"});
+            return res.json(errMessageMaker("err","Password"));
         }else{
-            return res.json({changeStatus: true});
+            return res.json(errMessageMaker("success","Password"));
         }
     }
 })
