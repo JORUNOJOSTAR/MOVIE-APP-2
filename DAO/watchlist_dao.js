@@ -7,8 +7,7 @@ export default class watchlist_dao{
     }
 
     static async addToWatchlist(user_id,movie_id){
-        const add_date = new Date();
-        return await manipulateData("INSERT INTO watchlist (user_id,movie_id,add_date) VALUES ($1,$2,$3)",[user_id,movie_id,add_date]);
+        return await manipulateData("INSERT INTO watchlist (user_id,movie_id) VALUES ($1,$2)",[user_id,movie_id]);
     }
 
     static async deleteFromWatchlist(user_id,movie_id){

@@ -1,6 +1,9 @@
 import {rating,review} from "./movieComponent.js";
 const movieId = document.getElementById("movieId").value;
 const orderList = ["Most popular","Up to date","Most funny"];
+const requestOptions = {
+    headers: { 'Content-Type': 'application/json' },
+};
 const showReviewFunc= async() => await showReviews();
 const showRatingFunc = async() => await showRating();
 
@@ -21,10 +24,21 @@ setWatchListBtn();
 // Setting up watchlist
 document.querySelector(".watchlist-btn").addEventListener("click",watchlistBtn);
 function watchlistBtn(){
-    setRemoveCookies(movieId);
-    document.querySelector(".watchlist-add").classList.toggle("hidden");
-    document.querySelector(".watchlist-remove").classList.toggle("hidden"); 
+    requestOptions.body = JSON.stringify({ movieId: movieId });
+    requestOptions.method = "POST";
+    fetch('/setWatchList', requestOptions)
+    .then(response => response.json())
+    .then(data =>{
+        if(data.status<0){
+            setRemoveCookies(movieId);
+        }
+        document.querySelector(".watchlist-add").classList.toggle("hidden");
+        document.querySelector(".watchlist-remove").classList.toggle("hidden"); 
+    } );
+    
 }
+
+
 
 
 document.querySelectorAll(".sort-details").forEach((element)=>{
@@ -97,14 +111,21 @@ function setRemoveCookies(id){
 }
 
 function setWatchListBtn(){
-    let currentCookie = document.cookie;
-    let cookieId = currentCookie ? currentCookie.split(";")[0].split("=")[1].split(",") : [];
-    if(cookieId.includes(movieId)){
-        document.querySelector(".watchlist-add").classList.add("hidden");
-        document.querySelector(".watchlist-remove").classList.remove("hidden"); 
-    }else{
-        document.querySelector(".watchlist-add").classList.remove("hidden");
-        document.querySelector(".watchlist-remove").classList.add("hidden"); 
-    }
+    
+    fetch('/checkWatchList')
+    .then(response => response.json())
+    .then(data =>{
+        let watchList = data.watchList.map(e=>e.toString());
+        if(watchList.includes(movieId)){
+            
+            document.querySelector(".watchlist-add").classList.add("hidden");
+            document.querySelector(".watchlist-remove").classList.remove("hidden"); 
+        }else{
+            document.querySelector(".watchlist-add").classList.remove("hidden");
+            document.querySelector(".watchlist-remove").classList.add("hidden"); 
+        } 
+    } );
+
+    
 }
 
