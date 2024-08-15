@@ -12,6 +12,10 @@ export class reviewDAO{
     static async getReviewByUserId(user_id){
         return await getData(`SELECT * FROM reviews WHERE user_id = $1`,[user_id]);
     }
+    
+    static async getReviewByUserAndMovieId(user_id,movie_id){
+        return await getData(`SELECT * FROM reviews WHERE user_id = $1 AND movie_id = $2`,[user_id,movie_id]);
+    }
 
 
     //Get review by Order
@@ -42,7 +46,7 @@ export class reviewDAO{
                RETURNING *
             `,
             [message,star,datetime,movie_id,user_id]);
-        const reviews = result[0] || [];
+        const reviews = result[0] || {};
         return reviews;
     }
 
@@ -51,7 +55,7 @@ export class reviewDAO{
     static async deleteReview(review_id,user_id){
         let deleteStatus = -1;
         const deleteReact = await reactDAO.removeReactForReview(review_id);
-        if(deleteReact>0){
+        if(deleteReact>=0){
             deleteStatus = await manipulateData("DELETE FROM reviews WHERE id = $1 AND user_id = $2",[review_id,user_id]);
         }
         return deleteStatus;
@@ -60,9 +64,9 @@ export class reviewDAO{
 
     
     // INCREASE OR DECREASE LIKE COUNT
-    static async updateLikeCount(review_id,user_id,decrease=false){
+    static async updateLikeCount(review_id,user_id,movie_id,decrease){
         let updateStatus = -1;
-        let updateReact = decrease ? await reactDAO.removeLike(review_id,user_id) : await reactDAO.addLike(review_id,user_id);
+        let updateReact = decrease ? await reactDAO.removeLike(review_id,user_id) : await reactDAO.addLike(review_id,user_id,movie_id);
         let updateString = decrease?"-1":"+1";
         
         if(updateReact>0){
@@ -75,9 +79,9 @@ export class reviewDAO{
     }
 
     // INCREASE OR DECREASE Funny COUNT
-    static async updateFunnyCount(review_id,user_id,decrease=false){
+    static async updateFunnyCount(review_id,user_id,movie_id,decrease){
         let updateStatus = -1;
-        let updateReact = decrease ? await reactDAO.removeFunny(review_id,user_id) : await reactDAO.addFunny(review_id,user_id);
+        let updateReact = decrease ? await reactDAO.removeFunny(review_id,user_id) : await reactDAO.addFunny(review_id,user_id,movie_id);
         let updateString = decrease?"-1":"+1";
 
         if(updateReact>0){

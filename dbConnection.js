@@ -40,7 +40,8 @@ async function getData(query,...params){
 async function manipulateData(query,...params){
     let status = -1;
     const result = await executeQuery(query,...params);
-    if(result.rowCount){
+    
+    if(result.rowCount || result.rowCount>=0){
         status=result.rowCount;
     }
     return status;

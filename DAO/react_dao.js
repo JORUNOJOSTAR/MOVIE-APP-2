@@ -2,25 +2,25 @@ import {getData, manipulateData} from "../dbConnection.js";
 
 export class reactDAO {
 
-    static async addLike(review_id,user_id){
+    static async addLike(review_id,user_id,movie_id){
         return await manipulateData(
-            `INSERT INTO react (review_id,user_id,react_like)
-             VALUES ($1,$2,true)
+            `INSERT INTO react (review_id,user_id,movie_id,react_like)
+             VALUES ($1,$2,$3,true)
              ON CONFLICT(review_id,user_id) DO UPDATE SET
              react_like = true
              `,
-            [review_id,user_id]
+            [review_id,user_id,movie_id]
         );
     }
 
-    static async addFunny(review_id,user_id){
+    static async addFunny(review_id,user_id,movie_id){
         return await manipulateData(
-            `INSERT INTO react (review_id,user_id,react_funny)
-             VALUES ($1,$2,true)
+            `INSERT INTO react (review_id,user_id,movie_id,react_funny)
+             VALUES ($1,$2,$3,true)
              ON CONFLICT(review_id,user_id) DO UPDATE SET
              react_funny = true
              `,
-            [review_id,user_id]
+            [review_id,user_id,movie_id]
         );
     }
 
@@ -54,6 +54,10 @@ export class reactDAO {
     
     static async removeReactForReview(review_id){
         return await manipulateData("DELETE FROM react WHERE review_id = $1",[review_id]);
+    }
+
+    static async getReaction(user_id,movie_id,review_id){
+        return await getData("SELECT * FROM react WHERE user_id = $1  and movie_id = $2 and review_id = $3",[user_id,movie_id,review_id]);
     }
 
     // static async removeReactForUser(user_id){

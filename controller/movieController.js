@@ -2,6 +2,8 @@ import express from "express";
 import { getMovieData } from "../api/movieapi.js";
 import { reviewDAO } from "../DAO/reviews_dao.js";
 import { userDAO } from "../DAO/users_dao.js";
+import { reactDAO } from "../DAO/react_dao.js";
+
 
 const router = express.Router();
 
@@ -9,6 +11,9 @@ router.post('/movie/:name', async(req, res)=>{
     const movieName = req.params.name;
     const movieId = req.body.movieId;
     const movieData =await getMovieData(movieId);
+    if(req.session.userId){
+        res.locals.user = req.session.userName;
+    }
     res.render("movie.ejs",{"movieData": movieData});
 });
 
@@ -21,18 +26,36 @@ router.get('/movie/reviews/:id',async(req,res)=>{
         reviewData.map(async (data) => {
             let formattedDate = formatDate(data.review_datetime);
             let user = await userDAO.getUserById(data.user_id);
-            return Object.assign(data,{review_datetime:formattedDate},{user_name: user.name})
+            return Object.assign(data,{review_datetime:formattedDate},{user_name: user.name},{reactLike: false},{reactFunny: false});
         })
     );
+    
+    if(req.session.userId){
+        reviewData = await reactionDataForAuth(reviewData,req.session.userId,movieId);
+    }
     res.json({"reviewData":reviewData});
 });
-
 
 router.get('/movie/rating/:id',async(req,res)=>{
     const movieId = req.params.id;
     const reviewStar = await reviewDAO.ratingOfMovie(movieId);
     res.json(averageRating(reviewStar));
 });
+
+async function reactionDataForAuth(reviewData,user_id,movie_id){
+    reviewData = await Promise.all(
+        reviewData.map(async(e)=>{
+            // add reactlike:true/false and reactFunny:true/false to all reviews that make by user
+            let react = await reactDAO.getReaction(user_id,movie_id,e.id);
+            
+            e.reactLike = react[0]? react[0].react_like : false;
+            e.reactFunny = react[0]? react[0].react_funny : false;
+            return e;
+        }) 
+    );
+    
+    return reviewData;
+}
 
 function averageRating(reviewStar){
     let starAverage = [0,0,0,0,0];

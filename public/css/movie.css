@@ -98,6 +98,18 @@
     color: yellow;
 }
 
+.input-star{
+    scale: 2;
+    color: black;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.yellow-star{
+    color: yellow;
+}
+
+
 .rating-percentage,.star-percentage{
     display: flex;
     
@@ -216,7 +228,9 @@
     padding-bottom: 5rem;
 }
 
-.reviewcontent{
+
+
+.reviewcontent,.user-review{
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -224,8 +238,28 @@
     background-color: #16202D;
 }
 
-.reviewcontent p{
+.reviewcontent p,.user-review p{
     margin: 0;
+}
+
+.user-review{
+    margin: 2rem 0rem 0rem 2rem;
+    width: 75%;
+    background-color: #2d517f;
+}
+
+.make-review-btn-container{
+    display: flex;
+    gap: 1rem;
+}
+
+.make-review-btn{
+    width: 10rem;
+}
+
+.review-err{
+    color: #FFFF00;
+    font-size: 1.2rem;
 }
 
 .review-user{
@@ -238,6 +272,8 @@
     color:#C1DBF4;
     width: 10%;
 }
+
+
 
 .review-stars svg {
     width: 0.5rem;
@@ -259,8 +295,13 @@
 }
 
 
+
 .reaction-btn svg {
     color: rgb(47, 105, 138);
+}
+
+.react {
+    color: rgb(130, 199, 239)!important;
 }
 
 .review-datetime{

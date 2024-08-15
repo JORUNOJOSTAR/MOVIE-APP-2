@@ -21,6 +21,81 @@ showReviewFunc();
 setWatchListBtn();
 
 
+document.querySelectorAll(".sort-details").forEach((element)=>{
+    element.addEventListener("click",(event)=>{
+        document.querySelector(".current-sort").classList.toggle("current-sort");
+        event.target.classList.add("current-sort");
+        reviewParent.innerHTML = "";
+        showReviewFunc();
+    })
+});
+
+
+
+async function showRating(){
+    const MovieRating = await getData("rating",movieId);
+    
+    if(MovieRating.averageRating){
+        ratingHTML = ejs.render(rating,MovieRating);
+    }
+    ratingParent.innerHTML = ratingHTML;
+    
+    for(let i=0;i<5;i++){
+        const barDiv = document.querySelector(`.bar-${i+1} div`)
+        if(barDiv){
+            barDiv.style.width = MovieRating.starAverage[i]+"%";
+        }else{
+            break;
+        }
+    }
+}
+
+async function showReviews() {
+    
+    let reviewContentHTML = "";
+    const currentOrder = document.querySelector(".current-sort").innerText;
+    const orderNum =  orderList.indexOf(currentOrder);
+    const offset = document.querySelectorAll(".reviewcontent").length;
+    const queryString = `?offset=${offset}&order=${orderNum}`;
+    const reviews = await getData("reviews",movieId,queryString);
+    
+    reviews.reviewData.forEach(
+        (data)=>{
+            reviewContentHTML = ejs.render(review,data);
+            if(data.reactLike){
+                reviewContentHTML = reviewContentHTML.replace("thumbs-up-btn","thumbs-up-btn react");
+            }
+            if(data.reactFunny){
+                reviewContentHTML = reviewContentHTML.replace("funny-btn","funny-btn react");
+            }
+            reviewParent.innerHTML += reviewContentHTML;
+        }
+    );
+
+    
+    if(document.querySelector(".more-review-btn")){
+        document.querySelector(".more-review-btn").remove();
+    }
+
+    if(reviews.reviewData.length==5){
+        reviewParent.innerHTML += moreReviewBtn;
+        document.querySelector(".more-review-btn").addEventListener("click",showReviewFunc);
+    }
+    
+}
+
+async function getData(urlString,movieId,queryString=""){
+    let reviews = {};
+    await fetch(`http://localhost:3000/movie/${urlString}/`+movieId+queryString).then(
+        (response)=>reviews = response.json()
+    ).catch(
+        (err)=>console.log(err)
+    )
+    return reviews;
+}
+
+
+
 // Setting up watchlist
 document.querySelector(".watchlist-btn").addEventListener("click",watchlistBtn);
 function watchlistBtn(){
@@ -38,62 +113,6 @@ function watchlistBtn(){
     
 }
 
-
-
-
-document.querySelectorAll(".sort-details").forEach((element)=>{
-    element.addEventListener("click",(event)=>{
-        document.querySelector(".current-sort").classList.toggle("current-sort");
-        event.target.classList.add("current-sort");
-        reviewParent.innerHTML = "";
-        showReviewFunc();
-    })
-});
-
-async function showRating(){
-    const MovieRating = await getData("rating",movieId);
-    
-    if(MovieRating.averageRating){
-        ratingHTML = ejs.render(rating,MovieRating);
-    }
-    ratingParent.innerHTML = ratingHTML;
-    
-    for(let i=0;i<5;i++){
-        document.querySelector(`.bar-${i+1} div`).style.width = MovieRating.starAverage[i]+"%";
-    }
-}
-
-async function showReviews() {
-    let reviewContentHTML = "";
-    const currentOrder = document.querySelector(".current-sort").innerText;
-    const orderNum =  orderList.indexOf(currentOrder);
-    const offset = document.querySelectorAll(".reviewcontent").length;
-    const queryString = `?offset=${offset}&order=${orderNum}`;
-    const reviews = await getData("reviews",movieId,queryString);
-    
-    reviews.reviewData.forEach(
-        (data)=>{
-            reviewContentHTML = ejs.render(review,data);
-            reviewParent.innerHTML += reviewContentHTML;
-        }
-    );
-    if(reviews.reviewData.length==5){
-        reviewParent.innerHTML += moreReviewBtn;
-        document.querySelector(".more-review-btn").onclick=showReviewFunc;
-    }else{
-        document.querySelector(".more-review-btn").remove();
-    }
-}
-
-async function getData(urlString,movieId,queryString=""){
-    let reviews = {};
-    await fetch(`http://localhost:3000/movie/${urlString}/`+movieId+queryString).then(
-        (response)=>reviews = response.json()
-    ).catch(
-        (err)=>console.log(err)
-    )
-    return reviews;
-}
 
 function setRemoveCookies(id){
     let currentCookie = document.cookie;
@@ -128,4 +147,6 @@ function setWatchListBtn(){
 
     
 }
+
+export {showRatingFunc,showReviewFunc};
 
