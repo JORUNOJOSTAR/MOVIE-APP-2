@@ -9,7 +9,6 @@ In this application you can:
 - edit your user name or change your password
 - Add your favourite movies in watchlist
 - search movies with keyword or category
-- restrict some movies data depending on user age
 - make,edit or delete your review and rate movies with star
 - react to reviews make by other user
 
