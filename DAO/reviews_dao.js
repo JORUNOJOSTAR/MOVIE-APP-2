@@ -68,13 +68,11 @@ export class reviewDAO{
         let updateStatus = -1;
         let updateReact = decrease ? await reactDAO.removeLike(review_id,user_id) : await reactDAO.addLike(review_id,user_id,movie_id);
         let updateString = decrease?"-1":"+1";
-        
         if(updateReact>0){
             updateStatus = await manipulateData(
                 `UPDATE reviews SET like_count = like_count ${updateString} WHERE id = $1`,
                 [review_id]);
         }
-
         return updateStatus;
     }
 

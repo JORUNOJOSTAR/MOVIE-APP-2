@@ -1,4 +1,5 @@
 import {rating,review} from "./movieComponent.js";
+import { updateReact } from "./review.js";
 const movieId = document.getElementById("movieId").value;
 const orderList = ["Most popular","Up to date","Most funny"];
 const requestOptions = {
@@ -14,13 +15,15 @@ let ratingHTML = `
 
 let ratingParent = document.querySelector(".review-overview");
 let reviewParent = document.querySelector(".review-content-container");
+
 let moreReviewBtn = `<div class="more-review-btn">More Reviews</div>`;
 
 showRatingFunc();
 showReviewFunc();
+
 setWatchListBtn();
 
-
+document.querySelector(".watchlist-btn").addEventListener("click",watchlistBtn);
 document.querySelectorAll(".sort-details").forEach((element)=>{
     element.addEventListener("click",(event)=>{
         document.querySelector(".current-sort").classList.toggle("current-sort");
@@ -29,6 +32,9 @@ document.querySelectorAll(".sort-details").forEach((element)=>{
         showReviewFunc();
     })
 });
+
+
+
 
 
 
@@ -50,6 +56,7 @@ async function showRating(){
     }
 }
 
+
 async function showReviews() {
     
     let reviewContentHTML = "";
@@ -68,10 +75,11 @@ async function showReviews() {
             if(data.reactFunny){
                 reviewContentHTML = reviewContentHTML.replace("funny-btn","funny-btn react");
             }
-            reviewParent.innerHTML += reviewContentHTML;
+            reviewParent.innerHTML += reviewContentHTML;   
         }
     );
 
+    
     
     if(document.querySelector(".more-review-btn")){
         document.querySelector(".more-review-btn").remove();
@@ -82,6 +90,17 @@ async function showReviews() {
         document.querySelector(".more-review-btn").addEventListener("click",showReviewFunc);
     }
     
+    document.querySelectorAll(".like-container").forEach((element)=>{
+        element.addEventListener("click",(event)=>{
+            updateReact(event,"like");
+        });
+    })
+
+    document.querySelectorAll(".funny-container").forEach((element)=>{
+        element.addEventListener("click",(event)=>{
+            updateReact(event,"funny");
+        });
+    })
 }
 
 async function getData(urlString,movieId,queryString=""){
@@ -97,7 +116,7 @@ async function getData(urlString,movieId,queryString=""){
 
 
 // Setting up watchlist
-document.querySelector(".watchlist-btn").addEventListener("click",watchlistBtn);
+
 function watchlistBtn(){
     requestOptions.body = JSON.stringify({ movieId: movieId });
     requestOptions.method = "POST";

@@ -1,6 +1,7 @@
 import express from "express";
 import { reviewDAO } from "../DAO/reviews_dao.js";
 
+
 const router = express.Router();
 
 router.use((req,res,next) =>{
@@ -46,7 +47,8 @@ router.post("/review/makeReview",async (req,res)=>{
     let star = reqData.star_message || 0;
     let review_message = reqData.review_message || "";
     let movie_id = reqData.movieId || "";
-    if(star<=0 || review_message.length<=0 || movie_id.length<=0){
+    if(star<=0 || review_message.length<=0 || !Boolean(parseInt(movie_id))){
+        console.log(movie_id);
         resData = {message: "Invalid review request"};
     }else{
         let reviewData = await reviewDAO.updateReview(review_message,star,movie_id,req.session.userId);
@@ -59,11 +61,28 @@ router.post("/review/makeReview",async (req,res)=>{
 })
 
 
-router.get("/review/like",(req,res)=>{
-    res.sendStatus(200);
+router.post("/review/react",async(req,res)=>{
+    let resData = {update:false};
+    const reqData = req.body.review;
+    const userId = req.session.userId;
+    let movie_id = reqData.movieId || ""; 
+    let review_id = reqData.review_id;
+    let decrease = reqData.decrease;
+    let reaction = reqData.reaction;
+    if(Boolean(parseInt(movie_id)) || Boolean(parseInt(review_id)) || typeof decrease == "boolean"){
+        let updateStatus = 0;
+        if(reaction == "like"){
+            updateStatus = await reviewDAO.updateLikeCount(review_id,userId,movie_id,decrease);
+        }
+        if(reaction == "funny"){
+            updateStatus = await reviewDAO.updateFunnyCount(review_id,userId,movie_id,decrease);
+        }
+        resData.update = updateStatus > 0;
+    }
+    res.json(resData);
 });
 
-router.get("/review/funny",(req,res)=>{
+router.post("/review/funny",(req,res)=>{
     res.sendStatus(200);
 });
 

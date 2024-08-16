@@ -10,8 +10,40 @@ let makeReviewDiv = document.querySelector("#make-review");
 
 document.querySelector(".review-btn").addEventListener("click",makeReviewFunc);
 
+// make reaction
+function updateReact(event,reaction){
+    const url = `/review/react`;
+    const firstChild = event.currentTarget.children[0];
+    const lastChild = event.currentTarget.children[1];
+    // get review id
+    let review_id = firstChild.id.split("-");
+    review_id = review_id[review_id.length-1];
+    // get reaction count
+    let reactCount = parseInt(lastChild.innerHTML || 0) ;
+    // is decrease
+    const decrease = firstChild.classList.contains("react");
 
-
+    requestOptions.body = JSON.stringify({ review: {
+        review_id: review_id,
+        movieId : movieId,
+        decrease: decrease,
+        reaction: reaction
+    } });
+    requestOptions.method = "POST";
+    makeRequest(url,requestOptions).then(data=>{
+        
+        if(data[0].update){
+            if(decrease){
+                firstChild.classList.remove("react");
+                lastChild.innerHTML = (reactCount -1 == 0)?"":(reactCount -1);
+            }else{
+                firstChild.classList.add("react");
+                lastChild.innerHTML = reactCount +1;
+            }
+        }
+        return data;
+    });
+}
 
 
 
@@ -133,4 +165,5 @@ async function makeRequest(url,requestOptions){
 }
 
 
+export {updateReact};
 
