@@ -50,7 +50,7 @@ nodemon index.js
 
 You can check the site on your localhost with the port you set on .env file
 
-`localhost:{port-number}`
+`localhost:3000`
 
 ![My Image](screenshot/home.png)
 ![My Image](screenshot/movieInfo.png)
