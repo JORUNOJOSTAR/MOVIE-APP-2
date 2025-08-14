@@ -985,92 +985,94 @@ A full-stack web application built with Node.js/Express and PostgreSQL that prov
 └─────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Deployment & DevOps Architecture
+## Current Development Environment
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
-│                              DEPLOYMENT ARCHITECTURE                                    │
+│                              LOCAL DEVELOPMENT SETUP                                    │
 ├─────────────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                         │
 │  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
-│  │                              ENVIRONMENT SETUP                                  │   │
+│  │                               CURRENT ENVIRONMENT                               │   │
 │  │                                                                                 │   │
 │  │  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────────┐ │   │
-│  │  │    DEVELOPMENT      │  │      STAGING        │  │     PRODUCTION          │ │   │
+│  │  │    DEVELOPMENT      │  │    LOCAL DATABASE   │  │    PACKAGE MANAGEMENT   │ │   │
 │  │  │                     │  │                     │  │                         │ │   │
-│  │  │ Local Setup:        │  │ Pre-production:     │  │ Live Environment:       │ │   │
-│  │  │ • Node.js 20+       │  │ • Identical to prod │  │ • Node.js LTS           │ │   │
-│  │  │ • PostgreSQL local  │  │ • Full dataset      │  │ • PostgreSQL cluster    │ │   │
-│  │  │ • Nodemon           │  │ • Performance       │  │ • Load balancer         │ │   │
-│  │  │ • Debug mode        │  │   testing           │  │ • SSL certificates      │ │   │
-│  │  │                     │  │ • User acceptance   │  │                         │ │   │
-│  │  │ Development Tools:  │  │   testing           │  │ Production Features:    │ │   │
-│  │  │ • Hot reload        │  │                     │  │ • Process manager       │ │   │
-│  │  │ • Error stack       │  │ Testing:            │  │ • Health monitoring     │ │   │
-│  │  │   traces            │  │ • Load testing      │  │ • Auto-scaling          │ │   │
-│  │  │ • Database seeding  │  │ • Security scans    │  │ • Backup systems        │ │   │
-│  │  │ • API mocking       │  │ • Performance       │  │                         │ │   │
-│  │  │                     │  │   profiling         │  │ Monitoring:             │ │   │
-│  │  │ Local Features:     │  │                     │  │ • Application logs      │ │   │
-│  │  │ • Detailed logging  │  │ Deployment:         │  │ • Database metrics      │ │   │
-│  │  │ • Test data         │  │ • Automated CI/CD   │  │ • System resources      │ │   │
-│  │  │ • Mock external     │  │ • Feature flags     │  │ • Error tracking        │ │   │
-│  │  │   APIs              │  │ • Rollback ready    │  │ • Performance APM       │ │   │
+│  │  │ Current Setup:      │  │ Database Setup:     │  │ Dependencies:           │ │   │
+│  │  │ • Node.js local     │  │ • PostgreSQL local  │  │ • npm packages          │ │   │
+│  │  │ • Manual startup    │  │ • Local connection  │  │ • nodemon (dev)         │ │   │
+│  │  │ • Console logging   │  │ • Direct queries    │  │ • express framework     │ │   │
+│  │  │ • File-based config │  │ • Manual DB mgmt    │  │ • ejs templating        │ │   │
+│  │  │                     │  │                     │  │                         │ │   │
+│  │  │ How to Run:         │  │ Connection:         │  │ Scripts Available:      │ │   │
+│  │  │ • npm install       │  │ • .env config       │  │ • npm install           │ │   │
+│  │  │ • node index.js     │  │ • Direct connection │  │ • node index.js         │ │   │
+│  │  │ • Manual restart    │  │ • Local host/port   │  │ • (no dev scripts)      │ │   │
+│  │  │ • Browser testing   │  │                     │  │                         │ │   │
+│  │  │                     │  │ Database Tools:     │  │ Development Tools:      │ │   │
+│  │  │ Local Features:     │  │ • psql command line │  │ • VS Code               │ │   │
+│  │  │ • Hot reload: NO    │  │ • pgAdmin (optional)│  │ • Browser DevTools      │ │   │
+│  │  │ • Auto-restart: NO  │  │ • Manual queries    │  │ • Git version control   │ │   │
+│  │  │ • Process mgmt: NO  │  │ • Schema from       │  │ • Terminal commands     │ │   │
+│  │  │ • Error recovery:NO │  │   queries.sql       │  │                         │ │   │
 │  │  └─────────────────────┘  └─────────────────────┘  └─────────────────────────┘ │   │
 │  └─────────────────────────────────────────────────────────────────────────────────┘   │
 │                                                                                         │
 │  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
-│  │                               CI/CD PIPELINE                                    │   │
+│  │                               ACTUAL FILE STRUCTURE                             │   │
 │  │                                                                                 │   │
-│  │  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────────┐ │   │
-│  │  │   SOURCE CONTROL    │  │      BUILD          │  │      DEPLOYMENT         │ │   │
-│  │  │                     │  │      PROCESS        │  │                         │ │   │
-│  │  │ Git Workflow:       │  │                     │  │ Deployment Strategy:    │ │   │
-│  │  │ • Feature branches  │  │ Build Steps:        │  │ • Blue-green deploy     │ │   │
-│  │  │ • Pull requests     │  │ • Install deps      │  │ • Rolling updates       │ │   │
-│  │  │ • Code review       │  │ • Run tests         │  │ • Canary releases       │ │   │
-│  │  │ • Automated hooks   │  │ • Security scan     │  │ • Zero-downtime         │ │   │
-│  │  │                     │  │ • Build assets      │  │                         │ │   │
-│  │  │ Quality Gates:      │  │ • Docker image      │  │ Infrastructure:         │ │   │
-│  │  │ • Code linting      │  │                     │  │ • Container orchestr.   │ │   │
-│  │  │ • Security scan     │  │ Testing Pipeline:   │  │ • Service mesh          │ │   │
-│  │  │ • Dependency audit  │  │ • Unit tests        │  │ • Database migration    │ │   │
-│  │  │ • Coverage reports  │  │ • Integration tests │  │ • Config management     │ │   │
-│  │  │                     │  │ • E2E tests         │  │                         │ │   │
-│  │  │ Branch Protection:  │  │ • Performance tests │  │ Monitoring Setup:       │ │   │
-│  │  │ • Required reviews  │  │                     │  │ • Health checks         │ │   │
-│  │  │ • Status checks     │  │ Artifact Storage:   │  │ • Log aggregation       │ │   │
-│  │  │ • Up-to-date        │  │ • Docker registry   │  │ • Metrics collection    │ │   │
-│  │  │   branches          │  │ • Build artifacts   │  │ • Alert configuration   │ │   │
-│  │  └─────────────────────┘  └─────────────────────┘  └─────────────────────────┘ │   │
+│  │  Project Root: c:\Users\JOE\Desktop\learningProject\MovieReview\               │   │
+│  │                                                                                 │   │
+│  │  Configuration Files:           Code Organization:                             │   │
+│  │  • package.json (dependencies)  • index.js (entry point)                      │   │
+│  │  • .env.example (template)      • server.js (Express setup)                   │   │
+│  │  • queries.sql (DB schema)      • controller/ (route handlers)                │   │
+│  │  • README.md (basic info)       • DAO/ (database operations)                  │   │
+│  │                                 • views/ (EJS templates)                      │   │
+│  │  Database Files:                • public/ (static assets)                     │   │
+│  │  • dbConnection.js              • api/ (TMDB integration)                     │   │
+│  │  • session.js                                                                  │   │
+│  │                                 Version Control:                               │   │
+│  │  Current Deployment:            • Git repository                               │   │
+│  │  • Local machine only           • GitHub: JORUNOJOSTAR/MOVIE-APP-2            │   │
+│  │  • Manual startup               • Branch: main                                 │   │
+│  │  • No automation                • Manual commits                               │   │
+│  │  • No containerization                                                         │   │
+│  │  • No cloud deployment                                                         │   │
 │  └─────────────────────────────────────────────────────────────────────────────────┘   │
 │                                                                                         │
-│  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
-│  │                             INFRASTRUCTURE                                      │   │
-│  │                                                                                 │   │
-│  │  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────────┐ │   │
-│  │  │   CLOUD PLATFORM    │  │    CONTAINERIZATION │  │     SCALABILITY         │ │   │
-│  │  │                     │  │                     │  │                         │ │   │
-│  │  │ Platform Options:   │  │ Docker Setup:       │  │ Horizontal Scaling:     │ │   │
-│  │  │ • AWS (preferred)   │  │ • Multi-stage build │  │ • Load balancer         │ │   │
-│  │  │ • Google Cloud      │  │ • Node.js optimized │  │ • Auto-scaling groups   │ │   │
-│  │  │ • Digital Ocean     │  │ • Security scanning │  │ • Session affinity      │ │   │
-│  │  │ • Heroku (simple)   │  │ • Size optimization │  │                         │ │   │
-│  │  │                     │  │                     │  │ Vertical Scaling:       │ │   │
-│  │  │ Services Used:      │  │ Container Features: │  │ • CPU/Memory scaling    │ │   │
-│  │  │ • Compute instances │  │ • Health checks     │  │ • Resource monitoring   │ │   │
-│  │  │ • Managed database  │  │ • Resource limits   │  │ • Performance tuning    │ │   │
-│  │  │ • Load balancing    │  │ • Logging config    │  │                         │ │   │
-│  │  │ • CDN integration   │  │ • Environment vars  │  │ Database Scaling:       │ │   │
-│  │  │ • SSL management    │  │                     │  │ • Read replicas         │ │   │
-│  │  │                     │  │ Orchestration:      │  │ • Connection pooling    │ │   │
-│  │  │ Security:           │  │ • Kubernetes (k8s)  │  │ • Query optimization    │ │   │
-│  │  │ • VPC networking    │  │ • Docker Swarm      │  │ • Index optimization    │ │   │
-│  │  │ • Security groups   │  │ • Simple containers │  │                         │ │   │
-│  │  │ • IAM roles         │  │ • Service discovery │  │                         │ │   │
-│  │  │ • Encryption        │  │                     │  │                         │ │   │
-│  │  └─────────────────────┘  └─────────────────────┘  └─────────────────────────┘ │   │
-│  └─────────────────────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Local Development Workflow
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                              CURRENT DEVELOPMENT PROCESS                                │
+├─────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                         │
+│  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────────────────┐  │
+│  │   SETUP PROCESS     │  │   DEVELOPMENT       │  │      TESTING & DEBUGGING       │  │
+│  │                     │  │   WORKFLOW          │  │                                 │  │
+│  │ 1. Prerequisites:   │  │                     │  │ Current Testing:                │  │
+│  │    • Node.js        │  │ 1. Code Changes     │  │ • Manual browser testing        │  │
+│  │    • PostgreSQL     │  │    • Edit files     │  │ • Console.log debugging         │  │
+│  │    • Git            │  │    • Save changes   │  │ • Browser DevTools              │  │
+│  │    • VS Code        │  │                     │  │ • Error message checking        │  │
+│  │                     │  │ 2. Database Updates │  │                                 │  │
+│  │ 2. Installation:    │  │    • Manual SQL     │  │ Debugging Process:              │  │
+│  │    • npm install    │  │    • Run queries    │  │ • Check server logs             │  │
+│  │    • Setup .env     │  │    • Test data      │  │ • Verify database connection    │  │
+│  │    • Create DB      │  │                     │  │ • Test API endpoints            │  │
+│  │    • Run schema     │  │ 3. Server Restart   │  │ • Validate user inputs          │  │
+│  │                     │  │    • Stop server    │  │                                 │  │
+│  │ 3. Configuration:   │  │    • node index.js  │  │ Current Limitations:            │  │
+│  │    • DB credentials │  │    • Manual process │  │ • No automated testing          │  │
+│  │    • TMDB API key   │  │                     │  │ • No error monitoring           │  │
+│  │    • Port settings  │  │ 4. Browser Testing  │  │ • No performance metrics        │  │
+│  │    • Session config │  │    • Open localhost │  │ • No load testing               │  │
+│  │                     │  │    • Test features  │  │ • No automated deployment       │  │
+│  └─────────────────────┘  └─────────────────────┘  └─────────────────────────────────┘  │
 │                                                                                         │
 └─────────────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -1083,45 +1085,44 @@ A full-stack web application built with Node.js/Express and PostgreSQL that prov
 ├─────────────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                         │
 │  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
-│  │                               SHORT TERM (3-6 months)                           │   │
+│  │                            SHORT TERM (3-6 months)                              │   │
 │  │                                                                                 │   │
 │  │  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────────┐ │   │
-│  │  │  USER EXPERIENCE    │  │   SOCIAL FEATURES   │  │    TECHNICAL DEBT       │ │   │
-│  │  │                     │  │                     │  │                         │ │   │
-│  │  │ • Advanced search   │  │ • Follow users      │  │ • Code refactoring      │ │   │
-│  │  │   with filters      │  │ • Review comments   │  │ • Unit test coverage    │ │   │
-│  │  │ • Personalized      │  │ • User profiles     │  │ • Documentation         │ │   │
-│  │  │   recommendations   │  │ • Review sharing    │  │ • Error handling        │ │   │
-│  │  │ • Dark mode theme   │  │                     │  │   improvement           │ │   │
-│  │  │ • Accessibility     │  │ • Social login      │  │                         │ │   │
-│  │  │   improvements      │  │   (Google, Facebook)│  │ • Performance           │ │   │
-│  │  │                     │  │ • Review moderation │  │   optimization          │ │   │
-│  │  │ • Mobile app        │  │ • Report system     │  │ • Security audit        │ │   │
-│  │  │   (React Native)    │  │                     │  │ • Dependency updates    │ │   │
-│  │  │ • PWA features      │  │                     │  │                         │ │   │
-│  │  │ • Offline support   │  │                     │  │                         │ │   │
-│  │  └─────────────────────┘  └─────────────────────┘  └─────────────────────────┘ │   │
+│  │  │  USER EXPERIENCE    │  │   DEVELOPMENT       │  │    TECHNICAL DEBT       │ │   │
+│  │  │                     │  │   IMPROVEMENTS      │  │                         │ │   │
+│  │  │ • Advanced search   │  │                     │  │ • Code refactoring      │ │   │
+│  │  │   with filters      │  │ • Add nodemon       │  │ • Unit test coverage    │ │   │
+│  │  │ • Dark mode theme   │  │   for auto-restart  │  │ • Documentation         │ │   │
+│  │  │ • Accessibility     │  │ • Environment       │  │ • Error handling        │ │   │
+│  │  │   improvements      │  │   variables setup   │  │   improvement           │ │   │
+│  │  │                     │  │ • Development       │  │                         │ │   │
+│  │  │ • User profiles     │  │   scripts in        │  │ • Performance           │ │   │
+│  │  │ • Review comments   │  │   package.json      │  │   optimization          │ │   │
+│  │  │ • Social features   │  │                     │  │ • Security audit        │ │   │
+│  │  │ • Review sharing    │  │ • Better logging    │  │ • Dependency updates    │ │   │
+│  │  └─────────────────────┘  │ • Error monitoring  │  └─────────────────────────┘ │   │
+│  │                           │ • Database backup   │                             │ │   │
+│  │                           │   strategy          │                             │ │   │
+│  │                           └─────────────────────┘                             │ │   │
 │  └─────────────────────────────────────────────────────────────────────────────────┘   │
 │                                                                                         │
 │  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
 │  │                              MEDIUM TERM (6-12 months)                          │   │
 │  │                                                                                 │   │
 │  │  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────────┐ │   │
-│  │  │   AI & ANALYTICS    │  │   CONTENT EXPANSION │  │    PLATFORM SCALE       │ │   │
-│  │  │                     │  │                     │  │                         │ │   │
-│  │  │ • ML recommendations│  │ • TV show support   │  │ • Microservices         │ │   │
-│  │  │ • Sentiment analysis│  │ • Streaming platform│  │   architecture          │ │   │
-│  │  │ • Smart review      │  │   integration       │  │ • API versioning        │ │   │
-│  │  │   summaries         │  │ • Movie trailers    │  │ • Rate limiting         │ │   │
-│  │  │ • Duplicate review  │  │ • Cast & crew info  │  │                         │ │   │
-│  │  │   detection         │  │                     │  │ • Caching layer         │ │   │
-│  │  │                     │  │ • News & articles   │  │   (Redis)               │ │   │
-│  │  │ • User behavior     │  │ • Upcoming releases │  │ • Message queuing       │ │   │
-│  │  │   analytics         │  │ • Box office data   │  │ • Event-driven arch     │ │   │
-│  │  │ • Recommendation    │  │                     │  │                         │ │   │
-│  │  │   engine training   │  │ • Multi-language    │  │ • Admin dashboard       │ │   │
-│  │  │ • Review quality    │  │   support           │  │ • Analytics dashboard   │ │   │
-│  │  │   scoring           │  │ • Localization      │  │ • Content management    │ │   │
+│  │  │   DEPLOYMENT        │  │   CONTENT EXPANSION │  │    PLATFORM SCALE       │ │   │
+│  │  │   OPTIONS           │  │                     │  │                         │ │   │
+│  │  │                     │  │ • TV show support   │  │ • API development       │ │   │
+│  │  │ • Docker setup      │  │ • Streaming platform│  │ • Rate limiting         │ │   │
+│  │  │ • Heroku deployment │  │   integration       │  │ • Caching layer         │ │   │
+│  │  │ • Environment       │  │ • Movie trailers    │  │   (Redis)               │ │   │
+│  │  │   management        │  │ • Cast & crew info  │  │                         │ │   │
+│  │  │                     │  │                     │  │ • Admin dashboard       │ │   │
+│  │  │ • CI/CD pipeline    │  │ • News & articles   │  │ • Analytics dashboard   │ │   │
+│  │  │ • Automated testing │  │ • Upcoming releases │  │ • Content management    │ │   │
+│  │  │ • Production        │  │ • Box office data   │  │                         │ │   │
+│  │  │   monitoring        │  │                     │  │ • Multi-language        │ │   │
+│  │  │ • SSL certificates  │  │                     │  │   support               │ │   │
 │  │  └─────────────────────┘  └─────────────────────┘  └─────────────────────────┘ │   │
 │  └─────────────────────────────────────────────────────────────────────────────────┘   │
 │                                                                                         │
@@ -1132,18 +1133,18 @@ A full-stack web application built with Node.js/Express and PostgreSQL that prov
 │  │  │   ENTERPRISE        │  │   COMMUNITY         │  │    INNOVATION           │ │   │
 │  │  │   FEATURES          │  │   PLATFORM          │  │                         │ │   │
 │  │  │                     │  │                     │  │ • AI-powered reviews    │ │   │
-│  │  │ • Multi-tenant      │  │ • User-generated    │  │ • Voice search          │ │   │
-│  │  │   architecture      │  │   content           │  │ • AR movie posters      │ │   │
-│  │  │ • API marketplace   │  │ • Community         │  │ • VR movie previews     │ │   │
-│  │  │ • White-label       │  │   challenges        │  │                         │ │   │
-│  │  │   solutions         │  │ • User badges       │  │ • Blockchain            │ │   │
-│  │  │                     │  │ • Leaderboards      │  │   integration           │ │   │
-│  │  │ • Enterprise SSO    │  │                     │  │ • NFT movie posters     │ │   │
-│  │  │ • Advanced          │  │ • Film festivals    │  │ • Metaverse presence    │ │   │
+│  │  │ • Multi-tenant      │  │ • User-generated    │  │ • Recommendation        │ │   │
+│  │  │   architecture      │  │   content           │  │   engine                │ │   │
+│  │  │ • API marketplace   │  │ • Community         │  │ • Mobile app            │ │   │
+│  │  │ • Cloud scaling     │  │   challenges        │  │   (React Native)        │ │   │
+│  │  │                     │  │ • User badges       │  │                         │ │   │
+│  │  │ • Microservices     │  │ • Leaderboards      │  │ • PWA features          │ │   │
+│  │  │ • Load balancing    │  │                     │  │ • Offline support       │ │   │
+│  │  │ • Advanced          │  │ • Film festivals    │  │ • Voice search          │ │   │
 │  │  │   analytics         │  │ • Critics network   │  │                         │ │   │
-│  │  │ • Custom branding   │  │ • Award voting      │  │ • IoT integration       │ │   │
-│  │  │                     │  │ • Movie clubs       │  │ • Smart TV apps         │ │   │
-│  │  │ • SLA guarantees    │  │                     │  │ • Cinema partnerships   │ │   │
+│  │  │ • Enterprise SSO    │  │ • Award voting      │  │ • Smart TV apps         │ │   │
+│  │  │                     │  │ • Movie clubs       │  │ • Cinema partnerships   │ │   │
+│  │  │ • SLA guarantees    │  │                     │  │                         │ │   │
 │  │  │ • 24/7 support      │  │                     │  │                         │ │   │
 │  │  └─────────────────────┘  └─────────────────────┘  └─────────────────────────┘ │   │
 │  └─────────────────────────────────────────────────────────────────────────────────┘   │
@@ -1151,4 +1152,38 @@ A full-stack web application built with Node.js/Express and PostgreSQL that prov
 └─────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-This comprehensive system diagram illustrates the complete architecture of the Movie Review application, showing how all components interact together to provide a robust, scalable movie review platform with user authentication, social features, external API integration, and enterprise-grade security and performance considerations.
+## Current State vs Future Possibilities
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                           DEVELOPMENT EVOLUTION PATH                                     │
+├─────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
+│  │                              CURRENT STATE                                      │   │
+│  │                                                                                 │   │
+│  │  What You Have Now:                         Next Immediate Steps:               │   │
+│  │  ✅ Working local application               1. Add development scripts          │   │
+│  │  ✅ Complete feature set                   2. Environment variable setup       │   │
+│  │  ✅ Database integration                   3. Error handling improvement        │   │
+│  │  ✅ TMDB API integration                   4. Code documentation               │   │
+│  │  ✅ User authentication                                                         │   │
+│  │  ✅ Review system                          Deployment Options When Ready:       │   │
+│  │  ✅ Social features                        • Heroku (easiest)                  │   │
+│  │  ✅ Responsive design                      • Vercel (for Node.js)              │   │
+│  │                                           • Railway (modern alternative)       │   │
+│  │  Current Gaps:                            • DigitalOcean (cost-effective)     │   │
+│  │  ❌ No automated restart                                                        │   │
+│  │  ❌ No environment management             When You're Ready to Scale:          │   │
+│  │  ❌ No deployment automation              • Docker containerization            │   │
+│  │  ❌ No monitoring                         • CI/CD pipelines                   │   │
+│  │  ❌ No error tracking                     • Load balancing                    │   │
+│  │  ❌ No automated testing                  • Database clustering               │   │
+│  └─────────────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                         │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+**Note:** This system diagram now accurately reflects your current local development setup. The Docker, Heroku, and deployment technologies mentioned are **future possibilities** when you decide to deploy your application to production, not current requirements.
