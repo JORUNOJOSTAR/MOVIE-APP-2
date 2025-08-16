@@ -64,31 +64,17 @@ export class reviewDAO{
 
     
     // INCREASE OR DECREASE LIKE COUNT
+    // Note: Triggers now automatically maintain like_count, so we only need to update reactions
     static async updateLikeCount(review_id,user_id,movie_id,decrease){
-        let updateStatus = -1;
-        let updateReact = decrease ? await reactDAO.removeLike(review_id,user_id) : await reactDAO.addLike(review_id,user_id,movie_id);
-        let updateString = decrease?"-1":"+1";
-        if(updateReact>0){
-            updateStatus = await manipulateData(
-                `UPDATE reviews SET like_count = like_count ${updateString} WHERE id = $1`,
-                [review_id]);
-        }
-        return updateStatus;
+        // The trigger will automatically update like_count when react table changes
+        return decrease ? await reactDAO.removeLike(review_id,user_id) : await reactDAO.addLike(review_id,user_id,movie_id);
     }
 
     // INCREASE OR DECREASE Funny COUNT
+    // Note: Triggers now automatically maintain funny_count, so we only need to update reactions
     static async updateFunnyCount(review_id,user_id,movie_id,decrease){
-        let updateStatus = -1;
-        let updateReact = decrease ? await reactDAO.removeFunny(review_id,user_id) : await reactDAO.addFunny(review_id,user_id,movie_id);
-        let updateString = decrease?"-1":"+1";
-
-        if(updateReact>0){
-            updateStatus = await manipulateData(
-                `UPDATE reviews SET funny_count = funny_count ${updateString} WHERE id = $1`,
-                [review_id]);
-        }
-
-        return updateStatus;
+        // The trigger will automatically update funny_count when react table changes
+        return decrease ? await reactDAO.removeFunny(review_id,user_id) : await reactDAO.addFunny(review_id,user_id,movie_id);
     }
 
     static async ratingOfMovie(movie_id){
