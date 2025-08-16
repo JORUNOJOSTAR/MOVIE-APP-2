@@ -29,6 +29,26 @@ Comprehensive analysis and optimization recommendations:
 - Migration scripts
 - Expected performance improvements
 
+### 🗄️ [migrations/](./migrations/)
+Database migration scripts and management:
+- Applied optimizations and schema changes
+- Migration runner for easy execution
+- Detailed migration history and documentation
+- See [migrations/README.md](./migrations/README.md) for details
+
+## Quick Migration Commands
+
+```bash
+# List all available migrations
+node migrate.js list
+
+# Run a specific migration
+node migrate.js 001_add_indexes_and_cascade_constraints
+
+# View migration documentation
+cat migrations/README.md
+```
+
 ## Quick Overview
 
 **Database Tables**: 5 main tables
