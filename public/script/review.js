@@ -135,8 +135,15 @@ function setReviewSection(review_star=-1){
         })
     })
 
-    document.querySelector(".add-btn").addEventListener("click",addReviewFunc);
-    document.querySelector(".delete-btn").addEventListener("click",deleteReviewFunc);
+    const addBtn = document.querySelector(".add-btn");
+    const deleteBtn = document.querySelector(".delete-btn");
+    
+    if (addBtn) {
+        addBtn.addEventListener("click", addReviewFunc);
+    }
+    if (deleteBtn) {
+        deleteBtn.addEventListener("click", deleteReviewFunc);
+    }
     
 
     if(review_star>0){
