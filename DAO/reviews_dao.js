@@ -51,14 +51,11 @@ export class reviewDAO{
     }
 
     // DELETE REVIEW
-    // should check wheter users is owner of review
+    // Note: CASCADE DELETE automatically removes all related reactions
+    // No need to manually delete reactions - database handles it automatically
     static async deleteReview(review_id,user_id){
-        let deleteStatus = -1;
-        const deleteReact = await reactDAO.removeReactForReview(review_id);
-        if(deleteReact>=0){
-            deleteStatus = await manipulateData("DELETE FROM reviews WHERE id = $1 AND user_id = $2",[review_id,user_id]);
-        }
-        return deleteStatus;
+        // Simply delete the review - cascade constraints handle reaction cleanup
+        return await manipulateData("DELETE FROM reviews WHERE id = $1 AND user_id = $2",[review_id,user_id]);
     }
 
 

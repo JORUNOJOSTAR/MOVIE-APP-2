@@ -52,6 +52,8 @@ export class reactDAO {
         return await manipulateData("DELETE FROM react WHERE review_id = $1 AND user_id = $2",[review_id,user_id]);
     }
     
+    // DEPRECATED: CASCADE DELETE now handles this automatically when review is deleted
+    // This method is kept for backward compatibility but is no longer needed
     static async removeReactForReview(review_id){
         return await manipulateData("DELETE FROM react WHERE review_id = $1",[review_id]);
     }
