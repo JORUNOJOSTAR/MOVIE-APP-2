@@ -1,5 +1,7 @@
 # Entity-Relationship Diagram for Movie Review System
 
+⬅️ [Back to Database Documentation Index](./ER_Diagram.md)
+
 ## ER Diagram
 
 ```mermaid
@@ -67,3 +69,6 @@ erDiagram
 - Reviews receive Reactions (1:M)
 
 For detailed entity descriptions, constraints, and design notes, see [Database Schema Documentation](./Database_Schema.md)
+
+---
+⬅️ [Back to Database Documentation Index](./ER_Diagram.md)

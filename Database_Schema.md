@@ -1,5 +1,7 @@
 # Database Schema Documentation - Movie Review System
 
+⬅️ [Back to Database Documentation Index](./ER_Diagram.md)
+
 ## Entity Descriptions
 
 ### USERS
@@ -159,3 +161,6 @@ CREATE INDEX idx_session_expire ON session(expire);
 - **User Activities**: Index on user_id for user-specific queries
 - **Session Cleanup**: Index on expire for efficient session cleanup
 - **Reaction Counts**: Consider denormalization for frequently accessed counts
+
+---
+⬅️ [Back to Database Documentation Index](./ER_Diagram.md)
