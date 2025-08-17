@@ -25,6 +25,11 @@
     height: 90%;
 }
 
+.movie-info-mid img{
+    border: 3px solid white;
+    border-radius: 4px;
+}
+
 .details{
     display: flex;
     flex-direction: column;
