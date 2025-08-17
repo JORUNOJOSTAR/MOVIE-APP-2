@@ -21,6 +21,13 @@ const Session = session({
     resave: false,
     saveUninitialized: false,
     secret: SESS_SECRET,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+        httpOnly: true, // Prevent XSS attacks on session cookies
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        sameSite: 'strict' // CSRF protection
+    },
+    rolling: true // Reset expiration on activity
 });
 
 export default Session;

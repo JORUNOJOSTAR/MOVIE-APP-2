@@ -16,10 +16,13 @@
     "body-parser": "^1.20.2",
     "connect-pg-simple": "^9.0.1",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
+    "express-rate-limit": "^8.0.1",
     "express-session": "^1.18.0",
+    "helmet": "^8.1.0",
     "moviereview": "file:",
     "nodemon": "^3.1.4",
     "pg": "^8.12.0"

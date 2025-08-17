@@ -20,12 +20,21 @@ export class reviewDAO{
 
     //Get review by Order
     static async getReviewByOrder(movie_id,offset,order=0){
-        const order_by = ["like_count","review_datetime","funny_count"];
-        order = order > 2 ? 0:order;
+        // Validate and sanitize order parameter to prevent SQL injection
+        const validOrders = {
+            0: "like_count",
+            1: "review_datetime", 
+            2: "funny_count"
+        };
+        
+        // Ensure order is a valid integer and within acceptable range
+        const sanitizedOrder = parseInt(order);
+        const orderBy = validOrders[sanitizedOrder] || validOrders[0];
+        
         return await getData(
             `SELECT * FROM reviews WHERE movie_id = $1 
-            ORDER BY ${order_by[order]} desc  
-            limit 5 offset $2`,
+            ORDER BY ${orderBy} DESC  
+            LIMIT 5 OFFSET $2`,
             [movie_id,offset]
         );
     }

@@ -21,7 +21,14 @@ async function executeQuery(query,params){
     const dbResult = await db.query(query,params).then((result)=>{
         queryResult = result;
     }).catch((error)=>{
-        console.log(error);
+        // Phase 1: Secure error logging - don't expose sensitive DB info
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('Database query error:', error.message);
+        } else {
+            console.error('Database operation failed');
+        }
+        // Return empty result instead of exposing error details
+        queryResult = { rows: [], rowCount: 0 };
     });
     return queryResult;
 }
