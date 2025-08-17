@@ -3,7 +3,9 @@
 
 .moviepg-container{
     color: white;
-    margin: auto 10vh;
+    margin: 1.5rem auto 0 auto;
+    margin-left: 10vh;
+    margin-right: 10vh;
     height: 100vh;
 }
 
