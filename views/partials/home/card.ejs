@@ -1,6 +1,6 @@
 <div class="card movie-card">
     <img src=<%= imgLink %> class="card-img-top" alt=<%= imgTitle %>>
-    <form action=<%= "/movie/"+imgTitle %> method="POST">
+    <form action=<%= "/movie/"+imgTitle.replace(/\s+/g, '-') %> method="POST">
         <input type="hidden" name="movieId" value=<%= movieId %>>
         <button class="card-text-btn"><a class="card-text"><%= imgTitle %></a></button>
     </form>

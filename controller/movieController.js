@@ -1,5 +1,5 @@
 import express from "express";
-import { getMovieData } from "../api/movieapi.js";
+import { getMovieData, searchMovies } from "../api/movieapi.js";
 import { reviewDAO } from "../DAO/reviews_dao.js";
 import { userDAO } from "../DAO/users_dao.js";
 import { reactDAO } from "../DAO/react_dao.js";
@@ -7,10 +7,51 @@ import { reactDAO } from "../DAO/react_dao.js";
 
 const router = express.Router();
 
+// POST endpoint - receives the form submission and redirects
 router.post('/movie/:name', async(req, res)=>{
     const movieName = req.params.name;
     const movieId = req.body.movieId;
-    const movieData =await getMovieData(movieId);
+    
+    // Store movieId in session temporarily for immediate redirect
+    req.session.tempMovieId = movieId;
+    
+    // Redirect to clean URL without movieId
+    res.redirect(`/movie/${movieName}`);
+});
+
+// GET endpoint - handles the actual page rendering
+router.get('/movie/:name', async(req, res)=>{
+    const movieName = req.params.name;
+    let movieId = req.session.tempMovieId;
+    
+    // Clear the temporary movieId from session
+    if (movieId) {
+        delete req.session.tempMovieId;
+    } else {
+        // No session data - this is a direct URL access (bookmark/refresh)
+        // Search for the movie by title to get the movieId
+        try {
+            const searchResults = await searchMovies(movieName.replace(/-/g, ' '), 1);
+            const exactMatch = searchResults.find(movie => 
+                movie.imgTitle.replace(/\s+/g, '-').toLowerCase() === movieName.toLowerCase()
+            );
+            
+            if (exactMatch) {
+                movieId = exactMatch.movieId;
+            } else {
+                return res.status(404).send('Movie not found');
+            }
+        } catch (error) {
+            console.error('Error searching for movie:', error);
+            return res.status(500).send('Error finding movie');
+        }
+    }
+    
+    if (!movieId) {
+        return res.status(400).send('Movie not found');
+    }
+    
+    const movieData = await getMovieData(movieId);
     if(req.session.userId){
         res.locals.user = req.session.userName;
     }
