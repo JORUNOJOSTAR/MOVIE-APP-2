@@ -22,16 +22,16 @@
 
         <div class="change-profile">
             <p class="change-name-msg"></p>
-            <form onsubmit="return false">
+            <form class="profile-form">
                 <h2>You can change your name here</h2>
                 <div >
                     <label for="newName">Enter new user name</label>
                     <input type="text" class="form-control " id="newName" aria-describedby="User Name" placeholder="New Name" name="newName" required>
                 </div>
-                <button type="submit" class="btn btn-primary submit-btn" onclick="changeName()">Change Name</button>
+                <button type="submit" class="btn btn-primary submit-btn change-name-btn">Change Name</button>
             </form>
             
-            <form onsubmit="return false">
+            <form class="profile-form">
                 <p class="change-pw-msg"></p>
                 <h2>You can change your password here</h2>
                 <div class="form-group">
@@ -42,11 +42,12 @@
                     <label for="Old-password">Old Password</label>
                     <input type="password" class="form-control "  id="Old-password" placeholder="Password" name="oldPassword" required>
                 </div>
-                <button type="submit" class="btn btn-primary submit-btn" onclick="changePw()">Change password</button>
+                <button type="submit" class="btn btn-primary submit-btn change-password-btn">Change password</button>
             </form>
 
         </div>
     </div>
 </div>
 <%- include('./partials/common'); %>
+<script src="/script/eventBindings.js"></script>
 <script src="/script/profile.js"></script>

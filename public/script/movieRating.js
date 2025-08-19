@@ -104,8 +104,15 @@ async function showReviews() {
 }
 
 async function getData(urlString,movieId,queryString=""){
+    // Check if movieId is valid
+    if (!movieId || movieId === 'undefined') {
+        console.warn('Invalid movieId:', movieId);
+        return {};
+    }
+    
     let reviews = {};
-    await fetch(`http://localhost:3000/movie/${urlString}/`+movieId+queryString).then(
+    // Use relative URL instead of hardcoded localhost
+    await fetch(`/movie/${urlString}/${movieId}${queryString}`).then(
         (response)=>reviews = response.json()
     ).catch(
         (err)=>console.log(err)
