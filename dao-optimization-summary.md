@@ -93,172 +93,198 @@ static async deleteReview(review_id,user_id){
 
 **Improvement**: 70% less code, atomic operation, bulletproof cleanup
 
-### **4. Enhanced Error Handling & Security (New Implementation)**
+### **4. Application-Level Atomicity (NEWLY IMPLEMENTED ✅)**
 
-#### **Before (Basic Error Handling):**
+#### **Before (No Transaction Support):**
 ```javascript
-// Minimal error handling
-try {
-    result = await pool.query(query, params);
-} catch (error) {
-    console.log(error); // Potential information leakage
-    return -1;
+// No atomic operations - risk of partial state
+static async updateReview(message,star,movie_id,user_id){
+    let datetime = new Date();
+    const result = await getData(`
+        INSERT INTO reviews (review_message,review_star,review_datetime,movie_id,user_id)
+           VALUES ($1,$2,$3,$4,$5)
+           ON CONFLICT(movie_id,user_id) 
+        DO UPDATE SET
+           edited = true,
+           review_message = EXCLUDED.review_message,
+           review_star = EXCLUDED.review_star,
+           review_datetime = EXCLUDED.review_datetime 
+           RETURNING *
+        `,
+        [message,star,datetime,movie_id,user_id]);
+    const reviews = result[0] || {};
+    return reviews;
 }
 ```
 
-#### **After (Secure Error Handling):**
+#### **After (Full Transaction Support ✅):**
 ```javascript
-// Enhanced error handling with security considerations
-try {
-    result = await pool.query(query, params);
-} catch (error) {
-    // Log for development, sanitize for production
-    if (process.env.NODE_ENV !== 'production') {
-        console.error('Database Error:', error);
-    } else {
-        console.error('Database Error:', error.message); // No stack trace in production
-    }
+// Atomic operations with full validation and rollback
+static async updateReview(message, star, movie_id, user_id){
+    return await withTransaction(async (client) => {
+        try {
+            const datetime = new Date();
+            
+            // Validate input parameters
+            if (!message || message.trim().length === 0) {
+                throw new Error('Review message cannot be empty');
+            }
+            
+            if (!star || star < 1 || star > 5) {
+                throw new Error('Star rating must be between 1 and 5');
+            }
+            
+            if (!movie_id || !user_id) {
+                throw new Error('Movie ID and User ID are required');
+            }
+            
+            // Execute operation within transaction
+            const result = await client.query(`
+                INSERT INTO reviews (review_message,review_star,review_datetime,movie_id,user_id)
+                   VALUES ($1,$2,$3,$4,$5)
+                   ON CONFLICT(movie_id,user_id) 
+                DO UPDATE SET
+                   edited = true,
+                   review_message = EXCLUDED.review_message,
+                   review_star = EXCLUDED.review_star,
+                   review_datetime = EXCLUDED.review_datetime 
+                   RETURNING *
+                `,
+                [message, star, datetime, movie_id, user_id]
+            );
+            
+            // Additional validation
+            if (result.rows.length === 0) {
+                throw new Error('Failed to create or update review');
+            }
+            
+            const review = result.rows[0];
+            
+            // Audit logging
+            if (process.env.NODE_ENV !== 'production') {
+                console.log(`Review ${review.edited ? 'updated' : 'created'} for user ${user_id}, movie ${movie_id}`);
+            }
+            
+            return review;
+            
+        } catch (error) {
+            // Automatic rollback handled by withTransaction
+            throw error;
+        }
+    });
+}
+```
+
+**Improvement**: 
+- ✅ **Full atomicity** - operations either complete entirely or rollback
+- ✅ **Input validation** - prevents invalid data
+- ✅ **Error handling** - comprehensive error catching and rollback
+- ✅ **Audit trail** - operation logging for development
+- ✅ **Data integrity** - guaranteed consistent state
+
+### **5. Enhanced Database Connection Layer (NEWLY IMPLEMENTED ✅)**
+
+#### **Added Transaction Infrastructure:**
+```javascript
+// New transaction wrapper functions in dbConnection.js
+export async function withTransaction(callback) {
+    const client = new pg.Client({...config});
     
-    // Return appropriate error codes without sensitive information
-    return { success: false, error: 'Database operation failed' };
-}
-```
-
-**Security Improvement**: ✅ **Information disclosure prevention**
-
-## 🛡️ **Security Enhancements Summary**
-
-### **Critical Security Fixes:**
-1. ✅ **SQL Injection Prevention** - Fixed ORDER BY vulnerability
-2. ✅ **Input Validation** - All user inputs validated and sanitized
-3. ✅ **Error Handling** - No sensitive information exposure
-4. ✅ **Parameterized Queries** - 100% coverage for all database operations
-
-### **Security Features Added:**
-- **Input Sanitization**: All user inputs validated before database operations
-- **SQL Injection Protection**: Parameterized queries enforced throughout
-- **Error Information Control**: Production-safe error messages
-- **Data Type Validation**: Strong typing for all database parameters
-
-## 🎯 **Current System Capabilities (Security Enhanced)**
-
-### **Automatic Data Management:**
-
-1. **User Account Deletion** → Securely deletes:
-   - ✅ All reviews by that user (CASCADE)
-   - ✅ All reactions by that user (CASCADE)
-   - ✅ All watchlist entries by that user (CASCADE)
-   - ✅ All session data for that user
-
-2. **Review Deletion** → Securely deletes:
-   - ✅ All reactions to that review (CASCADE)
-   - ✅ Updates counters via secure triggers
-   - ✅ Maintains data integrity
-
-3. **Reaction Changes** → Automatically updates:
-   - ✅ `like_count` in reviews table (TRIGGER)
-   - ✅ `funny_count` in reviews table (TRIGGER)
-   - ✅ Atomic operations prevent race conditions
-
-### **Performance & Security Improvements:**
-
-- **Movie review queries**: 10-100x faster (optimized indexes)
-- **Review sorting**: 5-50x faster (proper indexing)
-- **Counter operations**: Atomic and consistent (database triggers)
-- **Code complexity**: Reduced by 50-80% in critical methods
-- **Data integrity**: Enterprise-grade reliability
-- **Security posture**: Production-ready with zero known vulnerabilities
-
-## 📋 **Deprecated/Improved Methods**
-
-### **Security-Enhanced Methods:**
-```javascript
-// OLD: Vulnerable to SQL injection
-getReviewByOrder(movie_id, order) // SQL injection risk
-
-// NEW: Secure with input validation  
-getReviewByOrder(movie_id, order) // Input validated, injection-proof
-```
-
-### **Methods No Longer Needed:**
-```javascript
-// DEPRECATED: CASCADE DELETE handles this automatically
-reactDAO.removeReactForReview(review_id)
-
-// DEPRECATED: CASCADE DELETE handles this automatically  
-// (already commented out in your code)
-reactDAO.removeReactForUser(user_id)
-```
-
-### **Methods Still Needed:**
-```javascript
-// Still needed for individual reaction removal
-reactDAO.removeReact(review_id, user_id)
-reactDAO.removeLike(review_id, user_id)
-reactDAO.removeFunny(review_id, user_id)
-```
-
-## 🔧 **What Your DAO Methods Now Do:**
-
-### **Simplified Workflow:**
-1. **User Action** (like, unlike, delete review, etc.)
-2. **Single DAO Method Call** (no manual cleanup needed)
-3. **Database Handles Consistency** (cascades, triggers, constraints)
-4. **Predictable Results** (database-level integrity)
-
-### **Current Error Handling Status:**
-- **Database-level constraints** - foreign key cascades prevent orphaned data
-- **Automatic triggers** - maintain counter consistency
-- **Basic error logging** - secure error handling in connection layer
-- **⚠️ NEEDS IMPLEMENTATION: Application-level transactions for atomic operations**
-- **⚠️ NEEDS IMPLEMENTATION: Rollback mechanisms for multi-step operations**
-- **⚠️ NEEDS IMPLEMENTATION: Partial state prevention in complex workflows**
-
-### **Database-Level Protections (Already Implemented):**
-```sql
--- Cascade deletes prevent orphaned data
-ON DELETE CASCADE constraints
-
--- Triggers maintain counter consistency
-CREATE TRIGGER update_like_count_trigger...
-CREATE TRIGGER update_funny_count_trigger...
-```
-
-### **Application-Level Transactions (NOT YET IMPLEMENTED):**
-```javascript
-// This pattern is NOT currently implemented in your app:
-static async createReviewWithStats(userId, movieId, rating) {
-    const client = await pool.connect();
     try {
+        await client.connect();
         await client.query('BEGIN');
-        // Multiple operations here...
+        
+        const result = await callback(client);
+        
         await client.query('COMMIT');
+        return result;
     } catch (error) {
-        await client.query('ROLLBACK');  // ← NOT implemented
+        await client.query('ROLLBACK');
+        
+        // Secure error logging
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('Transaction error:', error.message);
+        } else {
+            console.error('Transaction operation failed');
+        }
+        
         throw error;
+    } finally {
+        await client.end();
     }
 }
+
+// Helper functions for common patterns
+export async function executeInTransaction(queries) { ... }
+export async function getDataWithTransaction(query, params) { ... }
+export async function manipulateDataWithTransaction(query, params) { ... }
 ```
 
-## 🎉 **Current Status:**
+**Features**:
+- ✅ **Atomic operations** - BEGIN/COMMIT/ROLLBACK handling
+- ✅ **Connection management** - proper cleanup and resource management
+- ✅ **Secure error logging** - no sensitive data exposure in production
+- ✅ **Flexible patterns** - multiple helper functions for different use cases
 
-Your movie review system now has:
-- ✅ **Critical security fix** (SQL injection prevented)
-- ✅ **Dramatically simplified code** (triggers handle counters)
-- ✅ **10-100x performance improvements** (indexes added)
-- ✅ **Database-level data integrity** (cascades and constraints)
-- ✅ **Automatic cleanup and maintenance** (triggers and cascades)
+### **6. Enhanced Reaction Operations (NEWLY IMPLEMENTED ✅)**
 
-### **⚠️ Next Phase - Application-Level Atomicity:**
-- 🔄 **TODO: Implement database transactions in DAO methods**
-- 🔄 **TODO: Add atomic operation patterns for complex workflows**
-- 🔄 **TODO: Implement rollback mechanisms for multi-step operations**
-- 🔄 **TODO: Add partial state prevention in application logic**
+#### **Before (Multi-step operations without atomicity):**
+```javascript
+static async removeLike(review_id,user_id){
+    let removeStatus = -1
+    const removeLike = await getData("UPDATE react SET react_like=false WHERE review_id = $1 AND user_id = $2 RETURNING *",[review_id,user_id]);
+    if(removeLike[0]){
+        removeStatus = 1;
+        if(!removeLike[0].react_funny){
+            await this.removeReact(review_id,user_id);  // Separate operation - risk of partial state
+        }
+    }
+    return removeStatus;
+}
+```
 
-All database-level improvements achieved with **minimal code changes** and **zero breaking changes** to your existing API! 🚀
+#### **After (Atomic multi-step operations ✅):**
+```javascript
+static async removeLike(review_id,user_id){
+    return await withTransaction(async (client) => {
+        try {
+            // Validate input parameters
+            if (!review_id || !user_id) {
+                throw new Error('Review ID and User ID are required');
+            }
+            
+            // Update react_like to false
+            const removeLike = await client.query(
+                "UPDATE react SET react_like=false WHERE review_id = $1 AND user_id = $2 RETURNING *",
+                [review_id, user_id]
+            );
+            
+            if (removeLike.rows.length === 0) {
+                throw new Error('Like reaction not found for this user and review');
+            }
+            
+            const reaction = removeLike.rows[0];
+            
+            // If both like and funny are false, remove the entire reaction record
+            if (!reaction.react_funny) {
+                await client.query(
+                    "DELETE FROM react WHERE review_id = $1 AND user_id = $2",
+                    [review_id, user_id]
+                );
+            }
+            
+            return 1; // Success
+            
+        } catch (error) {
+            throw error; // Automatic rollback
+        }
+    });
+}
+```
 
-### **Recommended Next Steps:**
-1. **Upgrade `dbConnection.js`** to use connection pooling
-2. **Add transaction wrapper functions**
-3. **Refactor DAO methods** to use transactions for complex operations
-4. **Implement compensating actions** for external API calls
+**Improvement**:
+- ✅ **Atomic multi-step operations** - both update and conditional delete in one transaction
+- ✅ **Input validation** - parameter checking
+- ✅ **Error handling** - comprehensive error catching
+- ✅ **Consistent state** - no partial operations possible
+

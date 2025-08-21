@@ -1,4 +1,4 @@
-import {getData, manipulateData} from "../dbConnection.js";
+import {getData, manipulateData, withTransaction} from "../dbConnection.js";
 
 export class reactDAO {
 
@@ -25,27 +25,75 @@ export class reactDAO {
     }
 
     static async removeLike(review_id,user_id){
-        let removeStatus = -1
-        const removeLike = await getData("UPDATE react SET react_like=false WHERE review_id = $1 AND user_id = $2 RETURNING *",[review_id,user_id]);
-        if(removeLike[0]){
-            removeStatus = 1;
-            if(!removeLike[0].react_funny){
-                await this.removeReact(review_id,user_id);
+        return await withTransaction(async (client) => {
+            try {
+                // Validate input parameters
+                if (!review_id || !user_id) {
+                    throw new Error('Review ID and User ID are required');
+                }
+                
+                // Update react_like to false
+                const removeLike = await client.query(
+                    "UPDATE react SET react_like=false WHERE review_id = $1 AND user_id = $2 RETURNING *",
+                    [review_id, user_id]
+                );
+                
+                if (removeLike.rows.length === 0) {
+                    throw new Error('Like reaction not found for this user and review');
+                }
+                
+                const reaction = removeLike.rows[0];
+                
+                // If both like and funny are false, remove the entire reaction record
+                if (!reaction.react_funny) {
+                    await client.query(
+                        "DELETE FROM react WHERE review_id = $1 AND user_id = $2",
+                        [review_id, user_id]
+                    );
+                }
+                
+                return 1; // Success
+                
+            } catch (error) {
+                throw error;
             }
-        }
-        return removeStatus;
+        });
     }
 
     static async removeFunny(review_id,user_id){
-        let removeStatus = -1
-        const removeFunny = await getData("UPDATE react SET react_funny=false WHERE review_id = $1 AND user_id = $2 RETURNING *",[review_id,user_id]);
-        if(removeFunny[0]){
-            removeStatus = 1;
-            if(!removeFunny[0].react_like){
-                await this.removeReact(review_id,user_id);
+        return await withTransaction(async (client) => {
+            try {
+                // Validate input parameters
+                if (!review_id || !user_id) {
+                    throw new Error('Review ID and User ID are required');
+                }
+                
+                // Update react_funny to false
+                const removeFunny = await client.query(
+                    "UPDATE react SET react_funny=false WHERE review_id = $1 AND user_id = $2 RETURNING *",
+                    [review_id, user_id]
+                );
+                
+                if (removeFunny.rows.length === 0) {
+                    throw new Error('Funny reaction not found for this user and review');
+                }
+                
+                const reaction = removeFunny.rows[0];
+                
+                // If both like and funny are false, remove the entire reaction record
+                if (!reaction.react_like) {
+                    await client.query(
+                        "DELETE FROM react WHERE review_id = $1 AND user_id = $2",
+                        [review_id, user_id]
+                    );
+                }
+                
+                return 1; // Success
+                
+            } catch (error) {
+                throw error;
             }
-        }
-        return removeStatus;
+        });
     }
 
     static async removeReact(review_id,user_id){

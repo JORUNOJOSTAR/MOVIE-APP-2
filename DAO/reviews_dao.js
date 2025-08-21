@@ -1,4 +1,4 @@
-import {getData,manipulateData} from "../dbConnection.js";
+import {getData,manipulateData,withTransaction} from "../dbConnection.js";
 import { reactDAO } from "./react_dao.js";
 
 export class reviewDAO{
@@ -40,31 +40,94 @@ export class reviewDAO{
     }
 
     
-    // CREATE OR EDIT REVIEW
-    static async updateReview(message,star,movie_id,user_id){
-        let datetime = new Date();
-        const result = await getData(`
-            INSERT INTO reviews (review_message,review_star,review_datetime,movie_id,user_id)
-               VALUES ($1,$2,$3,$4,$5)
-               ON CONFLICT(movie_id,user_id) 
-            DO UPDATE SET
-               edited = true ,
-               review_message = EXCLUDED.review_message,
-               review_star = EXCLUDED.review_star,
-               review_datetime = EXCLUDED.review_datetime 
-               RETURNING *
-            `,
-            [message,star,datetime,movie_id,user_id]);
-        const reviews = result[0] || {};
-        return reviews;
+    // CREATE OR EDIT REVIEW - Now with transaction support
+    static async updateReview(message, star, movie_id, user_id){
+        return await withTransaction(async (client) => {
+            try {
+                const datetime = new Date();
+                
+                // Validate input parameters
+                if (!message || message.trim().length === 0) {
+                    throw new Error('Review message cannot be empty');
+                }
+                
+                if (!star || star < 1 || star > 5) {
+                    throw new Error('Star rating must be between 1 and 5');
+                }
+                
+                if (!movie_id || !user_id) {
+                    throw new Error('Movie ID and User ID are required');
+                }
+                
+                // Execute the insert/update operation within transaction
+                const result = await client.query(`
+                    INSERT INTO reviews (review_message,review_star,review_datetime,movie_id,user_id)
+                       VALUES ($1,$2,$3,$4,$5)
+                       ON CONFLICT(movie_id,user_id) 
+                    DO UPDATE SET
+                       edited = true,
+                       review_message = EXCLUDED.review_message,
+                       review_star = EXCLUDED.review_star,
+                       review_datetime = EXCLUDED.review_datetime 
+                       RETURNING *
+                    `,
+                    [message, star, datetime, movie_id, user_id]
+                );
+                
+                // Additional validation - ensure the operation was successful
+                if (result.rows.length === 0) {
+                    throw new Error('Failed to create or update review');
+                }
+                
+                const review = result.rows[0];
+                
+                // Log operation for audit trail (in development)
+                if (process.env.NODE_ENV !== 'production') {
+                    console.log(`Review ${review.edited ? 'updated' : 'created'} for user ${user_id}, movie ${movie_id}`);
+                }
+                
+                return review;
+                
+            } catch (error) {
+                // Error will be caught by withTransaction and rolled back
+                throw error;
+            }
+        });
     }
 
     // DELETE REVIEW
     // Note: CASCADE DELETE automatically removes all related reactions
     // No need to manually delete reactions - database handles it automatically
     static async deleteReview(review_id,user_id){
-        // Simply delete the review - cascade constraints handle reaction cleanup
-        return await manipulateData("DELETE FROM reviews WHERE id = $1 AND user_id = $2",[review_id,user_id]);
+        return await withTransaction(async (client) => {
+            try {
+                // Validate input parameters
+                if (!review_id || !user_id) {
+                    throw new Error('Review ID and User ID are required');
+                }
+                
+                // Delete the review with user verification - cascade constraints handle reaction cleanup
+                const result = await client.query(
+                    "DELETE FROM reviews WHERE id = $1 AND user_id = $2 RETURNING *",
+                    [review_id, user_id]
+                );
+                
+                // Verify the deletion was successful
+                if (result.rows.length === 0) {
+                    throw new Error('Review not found or user not authorized to delete this review');
+                }
+                
+                // Log operation for audit trail (in development)
+                if (process.env.NODE_ENV !== 'production') {
+                    console.log(`Review ${review_id} deleted by user ${user_id}`);
+                }
+                
+                return result.rowCount;
+                
+            } catch (error) {
+                throw error;
+            }
+        });
     }
 
 
