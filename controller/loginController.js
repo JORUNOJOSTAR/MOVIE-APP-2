@@ -1,6 +1,7 @@
 import express from "express";
 import env from "dotenv";
 import { userDAO } from "../DAO/users_dao.js";
+import Sanitizer from "../utils/sanitizer.js";
 
 env.config();
 const {
@@ -61,14 +62,19 @@ router.post("/login",redirectProfile,async (req,res)=>{
 
 router.post("/register",redirectProfile,async (req,res)=>{
     const {user_name,user_email,password,age} = req.body;
-    let {isValid,message} = validChecker(user_name,user_email,password,age);
+    
+    // Sanitize user input
+    const sanitizedUserName = Sanitizer.sanitizeHtml(user_name || "");
+    const sanitizedUserEmail = Sanitizer.sanitizeHtml(user_email || "");
+    
+    let {isValid,message} = validChecker(sanitizedUserName,sanitizedUserEmail,password,age);
     
     if(isValid){
-        const {id}= await userDAO.registerUser(user_name,user_email,password,age);
+        const {id}= await userDAO.registerUser(sanitizedUserName,sanitizedUserEmail,password,age);
         if(id>0){
             req.session.userId = id;
-            req.session.userName = user_name;
-            req.session.userEmail = user_email;
+            req.session.userName = sanitizedUserName;
+            req.session.userEmail = sanitizedUserEmail;
             req.session.age = age
             return res.redirect("/profile");
         }
@@ -96,6 +102,10 @@ router.post("/logout",redirectLogin,(req,res)=>{
 
 router.put("/changeName",redirectLogin,async(req,res)=>{
     let newName = req.body.newName;
+    
+    // Sanitize the new name input
+    newName = Sanitizer.sanitizeHtml(newName || "");
+    
     if(newName){
         if(newName == req.session.userName){
             return res.json(errMessageMaker("same","name"));
@@ -134,10 +144,11 @@ router.put("/changePassWord",redirectLogin,async(req,res)=>{
 })
 
 router.get("/profile",redirectLogin,(req,res)=>{
+    // Escape user data before rendering to prevent XSS
     res.render("profile.ejs",{
-        userName: req.session.userName,
-        email : req.session.userEmail,
-        age: req.session.age
+        userName: Sanitizer.escapeHtml(req.session.userName || ""),
+        email : Sanitizer.escapeHtml(req.session.userEmail || ""),
+        age: req.session.age || ""
     });
 })
 

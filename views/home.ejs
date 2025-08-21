@@ -1,7 +1,7 @@
 <%- include('./partials/header'); %>
 <%- include('./partials/top_nav'); %>
 <% if (typeof keyword !== "undefined") { %>
-    <h3 class="search-result">Search Results: <span id="search-keyword"><%= keyword %></span></h3>
+    <h3 class="search-result">Search Results: <span id="search-keyword"><%- keyword %></span></h3>
 <% } %>
 <section class="movies-container" id="movie-section">
     <div class="card-container">

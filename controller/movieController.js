@@ -3,6 +3,7 @@ import { getMovieData, searchMovies } from "../api/movieapi.js";
 import { reviewDAO } from "../DAO/reviews_dao.js";
 import { userDAO } from "../DAO/users_dao.js";
 import { reactDAO } from "../DAO/react_dao.js";
+import Sanitizer from "../utils/sanitizer.js";
 
 
 const router = express.Router();
@@ -67,7 +68,18 @@ router.get('/movie/reviews/:id',async(req,res)=>{
         reviewData.map(async (data) => {
             let formattedDate = formatDate(data.review_datetime);
             let user = await userDAO.getUserById(data.user_id);
-            return Object.assign(data,{review_datetime:formattedDate},{user_name: user.name},{reactLike: false},{reactFunny: false});
+            
+            // Sanitize user-generated content before sending to client
+            const sanitizedData = {
+                ...data,
+                review_message: Sanitizer.escapeHtml(data.review_message || ""),
+                user_name: Sanitizer.escapeHtml(user.name || ""),
+                review_datetime: formattedDate,
+                reactLike: false,
+                reactFunny: false
+            };
+            
+            return sanitizedData;
         })
     );
     

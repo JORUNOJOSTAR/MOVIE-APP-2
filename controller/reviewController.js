@@ -1,6 +1,6 @@
 import express from "express";
 import { reviewDAO } from "../DAO/reviews_dao.js";
-
+import Sanitizer from "../utils/sanitizer.js";
 
 const router = express.Router();
 
@@ -40,13 +40,25 @@ router.delete("/review/delete",async (req,res)=>{
     res.json(resData);
 });
 
-router.post("/review/makeReview",async (req,res)=>{
+router.post("/review/makeReview", Sanitizer.validateReviewInput(), async (req,res)=>{
+    // Check for validation errors
+    const validationErrors = Sanitizer.getValidationErrors(req);
+    if (validationErrors) {
+        return res.status(400).json({
+            message: "Invalid input: " + validationErrors.errors.map(e => e.msg).join(', ')
+        });
+    }
+
     let resData = {};
     const reqData = req.body.review;
     const userName = req.session.userName;
     let star = reqData.star_message || 0;
     let review_message = reqData.review_message || "";
     let movie_id = reqData.movieId || "";
+    
+    // Additional sanitization for review message
+    review_message = Sanitizer.sanitizeHtml(review_message);
+    
     if(star<=0 || review_message.length<=0 || !Boolean(parseInt(movie_id))){
         console.log(movie_id);
         resData = {message: "Invalid review request"};
